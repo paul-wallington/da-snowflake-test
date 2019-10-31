@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description : An AWS Serverless Application for Lambda HTTP Requests
+
+Resources:
+
+  SnowflakeValidate:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: snowflake_validate-py
+      Role: !GetAtt SnowflakeTestRole.Arn
+      CodeUri: lamdba/
+      Handler: app.snowflake_validate
+      Runtime: python3.7
+      MemorySize: 1024
+      Timeout: 60
+      Events:
+        BucketEvent:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket
+            Events:
+              - 's3:ObjectCreated:Put'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .json
+      Environment:
+        Variables:
+          env: dev
+  Bucket:
+    Type: 'AWS::S3::Bucket'
+
+
+  ##############################
+  ### Policies and Roles ####
+  ##############################
+
+  SnowflakeTestRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ "-", [!Ref "AWS::Region", "snowflake-test"] ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+      - PolicyName: SystemsManagerGetParameter
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+            - ssm:GetParameterHistory
+            - ssm:GetParametersByPath
+            - ssm:GetParameters
+            - ssm:GetParameter
+            Resource: "*"
