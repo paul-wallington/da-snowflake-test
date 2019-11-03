@@ -2,7 +2,7 @@ import urllib
 import os
 import snowflake.connector as sf
 from common import Functions
-
+import s3fs
 
 def snowflake_validate(event, context):
 
@@ -47,20 +47,29 @@ def snowflake_validate(event, context):
         sql = 'SELECT current_database()'
         print(Functions.return_query(conn, sql))
 
-        # get the object that triggered lambda
-        bucket = event['Records'][0]['s3']['bucket']['name']
-        #key = urllib.unquote_plus(event['Records'][0]['s3']['object']['key'].encode('utf8'))
-        key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'].encode('utf8'))
-        file_name = os.path.basename(key)
-        full_dir = os.path.dirname(key)
-        snow_table = os.path.basename(full_dir)
-        print(
-            "bucket: " + bucket
-            + "\n key: " + key
-            + "\n file_name: " + file_name
-            + "\n full_dir: " + full_dir
-            + "\n SNOW_TABLE: " + snow_table)
+        fs = s3fs.S3FileSystem(anon=False)
+        fs.ls('tfgm-wallingtonp')
 
+        # get the object that triggered lambda
+        #try:
+
+
+            # bucket = event['Records'][0]['s3']['bucket']['name']
+            # for record in event['Records']:
+            #    key = record['s3']['object']['key']
+                # key = urllib.parse.unquote(event['Records'][0]['s3']['object']['key'])
+            #    file_name = os.path.basename(key)
+            #    full_dir = os.path.dirname(key)
+            #    snow_table = os.path.basename(full_dir)
+            #print(
+            #    "bucket: " + bucket
+            #    + "\n key: " + key
+            #    + "\n file_name: " + file_name
+            #    + "\n full_dir: " + full_dir
+            #    + "\n SNOW_TABLE: " + snow_table
+            #)
+        #except Exception as e:
+        #    print(e)
 
         #sql = 'SELECT current_version()'
         #with conn:
