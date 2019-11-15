@@ -1,12 +1,19 @@
 import urllib
+import json
 import os
 import snowflake.connector as sf
 from common import Functions
-import s3fs
+# import s3fs
+
 
 def snowflake_validate(event, context):
 
-    env = os.environ['env']
+    # AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    # AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+
+    env = os.environ.get('env')
+    if env is None:
+        env = 'dev'
     print('Setting environment to ' + env + '...')
 
     print('Getting parameters from parameter store...')
@@ -21,75 +28,127 @@ def snowflake_validate(event, context):
     param = '/snowflake/' + env + '/pw-param'
     pw = Functions.get_parameter(param, True)
 
+    # Snowflake data load parameters
+    param = '/snowflake/' + env + '/role-param'
+    role = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/db-param'
+    db = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/schema-param'
+    schema = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/wh-param'
+    wh = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/file-format-param'
+    file_format = Functions.get_parameter(param, True)
+
     # connect to snowflake data warehouse
     conn = sf.connect(
         account=ac,
         user=un,
-        password=pw
+        password=pw,
+        role=role,
+        warehouse=wh,
+        database=db,
+        schema=schema,
+        ocsp_response_cache_filename="/tmp/ocsp_response_cache"
     )
     print('Snowflake connection opened...')
 
-    # Snowflake data load parameters
-    param = '/snowflake/' + env + '/file-format-param'
-    pw = Functions.get_parameter(param, True)
-
-    param = '/snowflake/' + env + '/db-param'
-    pw = Functions.get_parameter(param, True)
-
-    param = '/snowflake/' + env + '/schema-param'
-    pw = Functions.get_parameter(param, True)
-
     try:
+        # sql = 'USE ROLE {}'.format(role)
+        # Functions.execute_query(conn, sql)
 
-        sql = 'USE DATABASE {}'.format('SNOWFLAKE_SAMPLE_DATA')
-        Functions.execute_query(conn, sql)
+        sql = 'SELECT current_role()'
+        print('role: ' + Functions.return_query(conn, sql))
+
+        # sql = 'USE WAREHOUSE {}'.format(wh)
+        # Functions.execute_query(conn, sql)
+
+        sql = 'SELECT current_warehouse()'
+        print('warehouse: ' + Functions.return_query(conn, sql))
+
+        try:
+            sql = 'ALTER WAREHOUSE {} RESUME'.format(wh)
+            Functions.execute_query(conn, sql)
+
+        except Exception as e:
+            print(e)
+
+        # sql = 'USE SCHEMA {}'.format(schema)
+        # Functions.execute_query(conn, sql)
+
+        sql = 'SELECT current_schema()'
+        print('schema: ' + Functions.return_query(conn, sql))
+
+        # sql = 'USE DATABASE {}'.format(db)
+        # Functions.execute_query(conn, sql)
 
         sql = 'SELECT current_database()'
-        print(Functions.return_query(conn, sql))
+        print('database: ' + Functions.return_query(conn, sql))
 
-        fs = s3fs.S3FileSystem(anon=False)
-        fs.ls('tfgm-wallingtonp')
+        # fs = s3fs.S3FileSystem(anon=False)
+        # fs.mkdir("tfgm-wallingtonp")
+        # fs.touch("tfgm-wallingtonp/test.txt")
+        # fs.ls("tfgm-wallingtonp/")
 
         # get the object that triggered lambda
-        #try:
+        # https://docs.aws.amazon.com/AmazonS3/latest/dev/notification-content-structure.html
+        try:
+            bucket = event['Records'][0]['s3']['bucket']['name']
+            arn = event['Records'][0]['s3']['bucket']['arn']
 
-
-            # bucket = event['Records'][0]['s3']['bucket']['name']
-            # for record in event['Records']:
-            #    key = record['s3']['object']['key']
+            for record in event['Records']:
+                key = record['s3']['object']['key']
+                size = record['s3']['object']['size']
                 # key = urllib.parse.unquote(event['Records'][0]['s3']['object']['key'])
-            #    file_name = os.path.basename(key)
-            #    full_dir = os.path.dirname(key)
-            #    snow_table = os.path.basename(full_dir)
-            #print(
-            #    "bucket: " + bucket
-            #    + "\n key: " + key
-            #    + "\n file_name: " + file_name
-            #    + "\n full_dir: " + full_dir
-            #    + "\n SNOW_TABLE: " + snow_table
-            #)
-        #except Exception as e:
-        #    print(e)
+                file_name = os.path.basename(key)
+                full_dir = os.path.dirname(key)
+                print(
+                    'bucket: ' + bucket
+                    + '\narn: ' + arn
+                    + '\nkey: ' + key
+                    + '\nsize: ' + str(size)
+                    #+ '\nfile_name: ' + file_name
+                    #+ '\nfull_dir: ' + full_dir
+                )
+        except Exception as e:
+            print(e)
 
-        #sql = 'SELECT current_version()'
-        #with conn:
+        try:
+            sql = 'TRUNCATE ' + schema + '.OutputAreaJson'
+            print(sql)
+            Functions.execute_query(conn, sql)
+
+            sql = "copy into " + schema + ".OutputAreaJson from @" + str.replace(bucket, "-", "_") + "/" + key + \
+                  " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
+            print(sql)
+            Functions.execute_query(conn, sql)
+
+        except Exception as e:
+            print(e)
+
+        # sql = 'SELECT current_version()'
+        # with conn:
         #    with conn.cursor() as cursor:
-        #        cursor.execute(sql)
+        #        cursor.execute(sql)    
         #        result = cursor.fetchone()
         #        print(result)
-        #print('Got here2')
-        #for c in cursor:
-        #print(c)
-        #except Exception as e:
+        # print('Got here2')
+        # for c in cursor:
+        # print(c)
+        # except Exception as e:
         #    print(e)
-        #finally:
+        # finally:
         #    cursor.close()
 
-        #print(one_row[0])
+        # print(one_row[0])
 
-        #sql = 'select * from "TFGMDW"."STG"."OUTPUTAREAJSON"'
+        # sql = 'select * from "TFGMDW"."STG"."OUTPUTAREAJSON"'
 
-        #with conn:
+        # with conn:
         #    with conn.cursor() as cur:
         #        cur.execute(sql)
         #        for c in cur:
@@ -106,11 +165,9 @@ def snowflake_validate(event, context):
 
 
 if __name__ == "__main__":
-    snowflake_validate({}, {})
+    # snowflake_validate({}, {})
 
-
-
-
-
-
-
+    json_event = "/var/task/event.json"
+    with open(json_event) as response:
+        _event = json.load(response)
+        snowflake_validate(_event, '')
