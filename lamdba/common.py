@@ -33,3 +33,4 @@ class Functions:
         result = cursor.fetchone()
         return result[0]
         cursor.close()
+

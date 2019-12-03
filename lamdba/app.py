@@ -3,10 +3,14 @@ import json
 import os
 import snowflake.connector as sf
 from common import Functions
+# import datetime
+# import boto3
+# from botocore.client import ClientError
+# status_code = 200
 # import s3fs
 
 
-def snowflake_validate(event, context):
+def invoke_snowflake_load_from_s3_event(event, context):
 
     # AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     # AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -64,9 +68,6 @@ def snowflake_validate(event, context):
         sql = 'SELECT current_role()'
         print('role: ' + Functions.return_query(conn, sql))
 
-        # sql = 'USE WAREHOUSE {}'.format(wh)
-        # Functions.execute_query(conn, sql)
-
         sql = 'SELECT current_warehouse()'
         print('warehouse: ' + Functions.return_query(conn, sql))
 
@@ -77,14 +78,8 @@ def snowflake_validate(event, context):
         except Exception as e:
             print(e)
 
-        # sql = 'USE SCHEMA {}'.format(schema)
-        # Functions.execute_query(conn, sql)
-
         sql = 'SELECT current_schema()'
         print('schema: ' + Functions.return_query(conn, sql))
-
-        # sql = 'USE DATABASE {}'.format(db)
-        # Functions.execute_query(conn, sql)
 
         sql = 'SELECT current_database()'
         print('database: ' + Functions.return_query(conn, sql))
@@ -103,16 +98,11 @@ def snowflake_validate(event, context):
             for record in event['Records']:
                 key = record['s3']['object']['key']
                 size = record['s3']['object']['size']
-                # key = urllib.parse.unquote(event['Records'][0]['s3']['object']['key'])
-                file_name = os.path.basename(key)
-                full_dir = os.path.dirname(key)
                 print(
                     'bucket: ' + bucket
                     + '\narn: ' + arn
                     + '\nkey: ' + key
                     + '\nsize: ' + str(size)
-                    #+ '\nfile_name: ' + file_name
-                    #+ '\nfull_dir: ' + full_dir
                 )
         except Exception as e:
             print(e)
@@ -124,7 +114,7 @@ def snowflake_validate(event, context):
 
             sql = "copy into " + schema + ".OutputAreaJson from @" + str.replace(bucket, "-", "_") + "/" + key + \
                   " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
-            print(sql)
+            print(sql) 
             Functions.execute_query(conn, sql)
 
         except Exception as e:
@@ -163,11 +153,109 @@ def snowflake_validate(event, context):
         conn.close()
         print('Snowflake connection closed...')
 
+    if __name__ == "__main__":
+        # snowflake_validate({}, {})
 
-if __name__ == "__main__":
-    # snowflake_validate({}, {})
+        json_event = "/var/task/event.json"
+        with open(json_event) as response:
+            _event = json.load(response)
+            invoke_snowflake_load_from_s3_event(_event, '')
 
-    json_event = "/var/task/event.json"
-    with open(json_event) as response:
-        _event = json.load(response)
-        snowflake_validate(_event, '')
+
+#def invoke_step_function(event, context):
+#    try:
+#        sf = boto3.client('stepfunctions')
+#        status_code = sf.start_execution(
+#            stateMachineArn='arn:aws:states:eu-west-2:177539856531:stateMachine:eu-west-2-invoke-lamdba-snowflake-validate',
+#            name=str(datetime.datetime.now().timestamp()),
+#            input=json.dumps(event)
+#        )
+#        print(status_code)
+
+#    except Exception as e:
+#        print('Exception: %s' % e)
+#        status_code = 500
+#        raise
+
+#    finally:
+#        return{
+#            'status_code': status_code,
+#            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
+#        }
+
+
+def invoke_snowflake_load(event, context):
+
+    env = os.environ.get('env')
+    if env is None:
+        env = 'dev'
+    print('Setting environment to ' + env + '...')
+
+    print('Getting parameters from parameter store...')
+
+    # Snowflake connection parameters
+    param = '/snowflake/' + env + '/ac-param'
+    ac = Functions.get_parameter(param, False)
+
+    param = '/snowflake/' + env + '/un-param'
+    un = Functions.get_parameter(param, False)
+
+    param = '/snowflake/' + env + '/pw-param'
+    pw = Functions.get_parameter(param, True)
+
+    # Snowflake data load parameters
+    param = '/snowflake/' + env + '/role-param'
+    role = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/db-param'
+    db = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/schema-param'
+    schema = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/wh-param'
+    wh = Functions.get_parameter(param, True)
+
+    param = '/snowflake/' + env + '/file-format-param'
+    file_format = Functions.get_parameter(param, True)
+
+    # connect to snowflake data warehouse
+    conn = sf.connect(
+        account=ac,
+        user=un,
+        password=pw,
+        role=role,
+        warehouse=wh,
+        database=db,
+        schema=schema,
+        ocsp_response_cache_filename="/tmp/ocsp_response_cache"
+    )
+    print('Snowflake connection opened...')
+
+    try:
+        sql = 'SELECT current_role()'
+        print('role: ' + Functions.return_query(conn, sql))
+
+        sql = 'SELECT current_warehouse()'
+        print('warehouse: ' + Functions.return_query(conn, sql))
+
+        try:
+            sql = 'ALTER WAREHOUSE {} RESUME'.format(wh)
+            Functions.execute_query(conn, sql)
+
+        except Exception as e:
+            print(e)
+
+        sql = 'SELECT current_schema()'
+        print('schema: ' + Functions.return_query(conn, sql))
+
+        sql = 'SELECT current_database()'
+        print('database: ' + Functions.return_query(conn, sql))
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        conn.close()
+        print('Snowflake connection closed...')
+
