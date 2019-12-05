@@ -73,7 +73,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: invoke-snowflake-load-from-s3-event
-      Role: !GetAtt SnowflakeTestRole.Arn
+      Role: !GetAtt SnowflakeLamdbaRole.Arn
       CodeUri: lamdba/
       Handler: app.invoke_snowflake_load_from_s3_event
       Runtime: python3.7
@@ -98,13 +98,13 @@ Resources:
           env: dev
 
 
-  InvokeSnowflakeLoad:
+  InvokeSnowflakeLoadFromCloudWatchEvent:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: invoke-snowflake-load
-      Role: !GetAtt SnowflakeTestRole.Arn
+      FunctionName: invoke-snowflake-load-from-cloudwatch-event
+      Role: !GetAtt SnowflakeLamdbaRole.Arn
       CodeUri: lamdba/
-      Handler: app.invoke_snowflake_load
+      Handler: app.invoke_snowflake_load_from_cloudwatch_event
       Runtime: python3.7
       MemorySize: 1024
       Timeout: 60
@@ -116,7 +116,7 @@ Resources:
 #    Type: AWS::Serverless::Function
 #    Properties:
 #      FunctionName: invoke_step_function-py
-#      Role: !GetAtt SnowflakeTestRole.Arn
+#      Role: !GetAtt SnowflakeLamdbaRole.Arn
 #      CodeUri: lamdba/
 #      Handler: app.invoke_step_function
 #      Runtime: python3.7
@@ -155,13 +155,13 @@ Resources:
               "States": {
                 "InvokeSnowflakeLoad": {
                   "Type": "Task",
-                  "Resource": "${InvokeSnowflakeLoadArn}",
+                  "Resource": "${InvokeSnowflakeLoadFromCloudWatchEventArn}",
                   "End": true
                }
               }
             }
           -
-            InvokeSnowflakeLoadArn: !GetAtt [ InvokeSnowflakeLoad, Arn ]
+            InvokeSnowflakeLoadFromCloudWatchEventArn: !GetAtt [ InvokeSnowflakeLoadFromCloudWatchEvent, Arn ]
 
   ##############################
   ### Cloud Watch Events Rule ####
@@ -215,7 +215,7 @@ Resources:
   ##############################
   ### Policies and Roles ####
   ##############################
-  SnowflakeTestRole:
+  SnowflakeLamdbaRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-test-role"] ]

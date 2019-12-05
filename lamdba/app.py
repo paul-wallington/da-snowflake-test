@@ -184,7 +184,7 @@ def invoke_snowflake_load_from_s3_event(event, context):
 #        }
 
 
-def invoke_snowflake_load(event, context):
+def invoke_snowflake_load_from_cloudwatch_event(event, context):
 
     env = os.environ.get('env')
     if env is None:
@@ -251,6 +251,33 @@ def invoke_snowflake_load(event, context):
 
         sql = 'SELECT current_database()'
         print('database: ' + Functions.return_query(conn, sql))
+
+        # get the object that triggered cloudwatch
+        # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html#events-for-services-not-listed
+        try:
+            bucket = event['detail']['requestParameters']['bucketName']
+            key = event['detail']['requestParameters']['key']
+
+            print(
+                'bucket: ' + bucket
+                + '\nkey: ' + key
+            )
+
+        except Exception as e:
+            print(e)
+
+        try:
+            sql = 'TRUNCATE ' + schema + '.OutputAreaJson'
+            print(sql)
+            Functions.execute_query(conn, sql)
+
+            sql = "copy into " + schema + ".OutputAreaJson from @" + str.replace(bucket, "-", "_") + "/" + key + \
+                  " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
+            print(sql)
+            Functions.execute_query(conn, sql)
+
+        except Exception as e:
+            print(e)
 
     except Exception as e:
         print(e)

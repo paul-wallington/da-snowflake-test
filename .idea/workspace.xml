@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/wallingtonp.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/copy-test-file-to-s3.sh" beforeDir="false" afterPath="$PROJECT_DIR$/copy-test-file-to-s3.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lamdba/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/common.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lamdba/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
@@ -33,25 +30,29 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../da-aws-python" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
-  <component name="RunManager">
-    <configuration name="[Remote] snowflake-validate-py-event-test" type="aws.lambda" factoryName="Remote">
+  <component name="RunManager" selected="AWS Lambda.[Remote] invoke-snowflake-load-from-cloudwatch-event">
+    <configuration name="[Remote] invoke-snowflake-load-from-cloudwatch-event" type="aws.lambda" factoryName="Remote">
       <option name="credentialProviderId" value="profile:default" />
       <option name="regionId" value="eu-west-2" />
-      <option name="functionName" value="snowflake-validate-py" />
+      <option name="functionName" value="invoke-snowflake-load-from-cloudwatch-event" />
+      <option name="input" value="{&#10;  &quot;version&quot;: &quot;0&quot;,&#10;  &quot;id&quot;: &quot;e9e7d444-3bd5-4b33-69ba-740923c2f68d&quot;,&#10;  &quot;detail-type&quot;: &quot;AWS API Call via CloudTrail&quot;,&#10;  &quot;source&quot;: &quot;aws.s3&quot;,&#10;  &quot;account&quot;: &quot;177539856531&quot;,&#10;  &quot;time&quot;: &quot;2019-12-04T10:08:45Z&quot;,&#10;  &quot;region&quot;: &quot;eu-west-2&quot;,&#10;  &quot;resources&quot;: [],&#10;  &quot;detail&quot;: {&#10;    &quot;eventVersion&quot;: &quot;1.05&quot;,&#10;    &quot;userIdentity&quot;: {&#10;      &quot;type&quot;: &quot;IAMUser&quot;,&#10;      &quot;principalId&quot;: &quot;AIDAJJ3U674JG4ZU3QOES&quot;,&#10;      &quot;arn&quot;: &quot;arn:aws:iam::177539856531:user/pwallington&quot;,&#10;      &quot;accountId&quot;: &quot;177539856531&quot;,&#10;      &quot;accessKeyId&quot;: &quot;AKIASSVRTHCJ3QGM2N5M&quot;,&#10;      &quot;userName&quot;: &quot;pwallington&quot;&#10;    },&#10;    &quot;eventTime&quot;: &quot;2019-12-04T10:08:45Z&quot;,&#10;    &quot;eventSource&quot;: &quot;s3.amazonaws.com&quot;,&#10;    &quot;eventName&quot;: &quot;PutObject&quot;,&#10;    &quot;awsRegion&quot;: &quot;eu-west-2&quot;,&#10;    &quot;sourceIPAddress&quot;: &quot;62.255.235.107&quot;,&#10;    &quot;userAgent&quot;: &quot;[aws-cli/1.16.288 Python/3.7.5 Linux/4.14.154-boot2docker exec-env/AWS_Lambda_python3.7 botocore/1.13.24]&quot;,&#10;    &quot;requestParameters&quot;: {&#10;      &quot;bucketName&quot;: &quot;da-wallingtonp-test&quot;,&#10;      &quot;Host&quot;: &quot;da-wallingtonp-test.s3.eu-west-2.amazonaws.com&quot;,&#10;      &quot;key&quot;: &quot;stg/OutputAreaJson/test.json&quot;&#10;    },&#10;    &quot;responseElements&quot;: null,&#10;    &quot;additionalEventData&quot;: {&#10;      &quot;SignatureVersion&quot;: &quot;SigV4&quot;,&#10;      &quot;CipherSuite&quot;: &quot;ECDHE-RSA-AES128-GCM-SHA256&quot;,&#10;      &quot;bytesTransferredIn&quot;: 190553,&#10;      &quot;AuthenticationMethod&quot;: &quot;AuthHeader&quot;,&#10;      &quot;x-amz-id-2&quot;: &quot;Kczd/MRaHMpzniRfG5TLZBktAC8NxLdE25O8SzmSLegopLtNeGpr79Fbi76+6TVEg76oDJRs5eo=&quot;,&#10;      &quot;bytesTransferredOut&quot;: 0&#10;    },&#10;    &quot;requestID&quot;: &quot;0F2124E1EED0538F&quot;,&#10;    &quot;eventID&quot;: &quot;51f74d90-9803-47c5-b46d-2a938b82aacc&quot;,&#10;    &quot;readOnly&quot;: false,&#10;    &quot;resources&quot;: [&#10;      {&#10;        &quot;type&quot;: &quot;AWS::S3::Object&quot;,&#10;        &quot;ARN&quot;: &quot;arn:aws:s3:::da-wallingtonp-test/stg/OutputAreaJson/test.json&quot;&#10;      },&#10;      {&#10;        &quot;accountId&quot;: &quot;177539856531&quot;,&#10;        &quot;type&quot;: &quot;AWS::S3::Bucket&quot;,&#10;        &quot;ARN&quot;: &quot;arn:aws:s3:::da-wallingtonp-test&quot;&#10;      }&#10;    ],&#10;    &quot;eventType&quot;: &quot;AwsApiCall&quot;,&#10;    &quot;recipientAccountId&quot;: &quot;177539856531&quot;&#10;  }&#10;}" />
+      <option name="inputIsFile" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="[Remote] invoke-snowflake-load-from-s3-event" type="aws.lambda" factoryName="Remote">
+      <option name="credentialProviderId" value="profile:default" />
+      <option name="regionId" value="eu-west-2" />
+      <option name="functionName" value="invoke-snowflake-load-from-s3-event" />
       <option name="input" value="{  &#10;   &quot;Records&quot;:[  &#10;      {  &#10;         &quot;eventVersion&quot;:&quot;2.1&quot;,&#10;         &quot;eventSource&quot;:&quot;aws:s3&quot;,&#10;         &quot;awsRegion&quot;:&quot;us-west-2&quot;,&#10;         &quot;eventTime&quot;:&quot;1970-01-01T00:00:00.000Z&quot;,&#10;         &quot;eventName&quot;:&quot;ObjectCreated:Put&quot;,&#10;         &quot;userIdentity&quot;:{  &#10;            &quot;principalId&quot;:&quot;AIDAJDPLRKLG7UEXAMPLE&quot;&#10;         },&#10;         &quot;requestParameters&quot;:{  &#10;            &quot;sourceIPAddress&quot;:&quot;127.0.0.1&quot;&#10;         },&#10;         &quot;responseElements&quot;:{  &#10;            &quot;x-amz-request-id&quot;:&quot;C3D13FE58DE4C810&quot;,&#10;            &quot;x-amz-id-2&quot;:&quot;FMyUVURIY8/IgAtTv8xRjskZQpcIZ9KG4V5Wp6S7S/JRWeUWerMUE5JgHvANOjpD&quot;&#10;         },&#10;         &quot;s3&quot;:{  &#10;            &quot;s3SchemaVersion&quot;:&quot;1.0&quot;,&#10;            &quot;configurationId&quot;:&quot;testConfigRule&quot;,&#10;            &quot;bucket&quot;:{  &#10;               &quot;name&quot;:&quot;tfgm-wallingtonp-test&quot;,&#10;               &quot;ownerIdentity&quot;:{  &#10;                  &quot;principalId&quot;:&quot;A3NL1KOZZKExample&quot;&#10;               },&#10;               &quot;arn&quot;:&quot;arn:aws:s3:::tfgm-wallingtonp-test&quot;&#10;            },&#10;            &quot;object&quot;:{  &#10;               &quot;key&quot;:&quot;stg/OutputAreaJson/test.json&quot;,&#10;               &quot;size&quot;:1024,&#10;               &quot;eTag&quot;:&quot;d41d8cd98f00b204e9800998ecf8427e&quot;,&#10;               &quot;versionId&quot;:&quot;096fKKXTRTtl3on89fVO.nfljtsv6qko&quot;,&#10;               &quot;sequencer&quot;:&quot;0055AED6DCD90281E5&quot;&#10;            }&#10;         }&#10;      }&#10;   ]&#10;}" />
       <option name="inputIsFile" value="false" />
       <method v="2" />
     </configuration>
-    <configuration name="[Remote] snowflake-validate-py" type="aws.lambda" factoryName="Remote" nameIsGenerated="true">
-      <option name="credentialProviderId" value="profile:default" />
-      <option name="regionId" value="eu-west-2" />
-      <option name="functionName" value="snowflake-validate-py" />
-      <option name="input" value="{}" />
-      <option name="inputIsFile" value="false" />
-      <method v="2" />
-    </configuration>
+    <list>
+      <item itemvalue="AWS Lambda.[Remote] invoke-snowflake-load-from-cloudwatch-event" />
+      <item itemvalue="AWS Lambda.[Remote] invoke-snowflake-load-from-s3-event" />
+    </list>
   </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
@@ -93,5 +94,31 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575470186696">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575470186696" />
+    <state width="797" height="302" key="GridCell.Tab.0.bottom" timestamp="1575474107837">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="797" height="302" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
+    <state width="797" height="302" key="GridCell.Tab.0.center" timestamp="1575474107837">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="797" height="302" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
+    <state width="797" height="302" key="GridCell.Tab.0.left" timestamp="1575474107836">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="797" height="302" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107836" />
+    <state width="797" height="302" key="GridCell.Tab.0.right" timestamp="1575474107837">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="797" height="302" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
+    <state x="340" y="167" key="SettingsEditor" timestamp="1575542555765">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="340" y="167" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575542555765" />
   </component>
 </project>
