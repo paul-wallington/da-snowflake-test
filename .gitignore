@@ -1,1 +1,11 @@
-"da-snowflake-test/" 
+# Compiled files
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+# logs
+terraform.log
+terraform.txt
+
+# Directories
+.terraform/
