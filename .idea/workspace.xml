@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/wallingtonp.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/da-snowflake-test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/da-snowflake-test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lamdba/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,8 +29,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../da-aws-python" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HCL" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager" selected="AWS Lambda.[Remote] invoke-snowflake-load-from-cloudwatch-event">
@@ -100,6 +103,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575470186696" />
+    <state x="619" y="279" key="FileChooserDialogImpl" timestamp="1576238088543">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="619" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1576238088543" />
     <state width="797" height="302" key="GridCell.Tab.0.bottom" timestamp="1575474107837">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -116,9 +123,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="797" height="302" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
-    <state x="340" y="167" key="SettingsEditor" timestamp="1575542555765">
+    <state x="340" y="167" key="SettingsEditor" timestamp="1576678160839">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="340" y="167" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1576678160839" />
     <state x="340" y="167" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575542555765" />
+    <state x="661" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1576237891338">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="661" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1576237891338" />
   </component>
 </project>

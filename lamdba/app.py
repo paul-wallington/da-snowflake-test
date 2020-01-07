@@ -12,9 +12,6 @@ from common import Functions
 
 def invoke_snowflake_load_from_s3_event(event, context):
 
-    # AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    # AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-
     env = os.environ.get('env')
     if env is None:
         env = 'dev'
@@ -160,28 +157,6 @@ def invoke_snowflake_load_from_s3_event(event, context):
         with open(json_event) as response:
             _event = json.load(response)
             invoke_snowflake_load_from_s3_event(_event, '')
-
-
-#def invoke_step_function(event, context):
-#    try:
-#        sf = boto3.client('stepfunctions')
-#        status_code = sf.start_execution(
-#            stateMachineArn='arn:aws:states:eu-west-2:177539856531:stateMachine:eu-west-2-invoke-lamdba-snowflake-validate',
-#            name=str(datetime.datetime.now().timestamp()),
-#            input=json.dumps(event)
-#        )
-#        print(status_code)
-
-#    except Exception as e:
-#        print('Exception: %s' % e)
-#        status_code = 500
-#        raise
-
-#    finally:
-#        return{
-#            'status_code': status_code,
-#            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
-#        }
 
 
 def invoke_snowflake_load_from_cloudwatch_event(event, context):
