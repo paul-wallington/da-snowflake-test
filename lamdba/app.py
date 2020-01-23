@@ -150,14 +150,6 @@ def invoke_snowflake_load_from_s3_event(event, context):
         conn.close()
         print('Snowflake connection closed...')
 
-    if __name__ == "__main__":
-        # snowflake_validate({}, {})
-
-        json_event = "/var/task/event.json"
-        with open(json_event) as response:
-            _event = json.load(response)
-            invoke_snowflake_load_from_s3_event(_event, '')
-
 
 def invoke_snowflake_load_from_cloudwatch_event(event, context):
 
@@ -260,4 +252,12 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
     finally:
         conn.close()
         print('Snowflake connection closed...')
+
+    if __name__ == "__main__":
+        # snowflake_validate({}, {})
+
+        json_event = "/var/task/event.json"
+        with open(json_event) as response:
+            _event = json.load(response)
+            invoke_snowflake_load_from_cloudwatch_event(_event, '')
 

@@ -2,16 +2,34 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description : An AWS Serverless Application for snowflake data ingestion
 
+#Parameters:
+  #SnowflakeIAMUser:
+  #  Type: String
+  #  Description: Stage credential SNOWFLAKE_IAM_USER
+  #  Default: ""
+  #  AllowedPattern: ^[-a-zA-Z0-9_./]+:[0-9]+$
+#  SnowflakeExternalId:
+#    Type: String
+#    Description: Stage credential AWS_EXTERNAL_ID
+#    Default: "IK47054_SFCRole=2_WMe2nBFlcau6mO3TImVPhdcU6SE="
+#    AllowedPattern: ^[-a-zA-Z0-9_./]+:[0-9]+$
+
+#Conditions:
+#  HasSnowflakeIamUser: !Not
+#    - !Equals
+#      - !Ref 'SnowflakeIAMUser'
+#      - ''
+
 Resources:
 
   ##############################
   ### S3 ####
   ##############################
-  OutputAreaJsonS3:
+  SnowflakeLandingS3:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
-      BucketName: da-wallingtonp-test
+      BucketName: da-snowflake-landing
       #NotificationConfiguration:
       #  LambdaConfigurations:
       #  - Event: 's3:ObjectCreated:Put''
@@ -23,252 +41,10 @@ Resources:
         RestrictPublicBuckets : true
     DeletionPolicy: Delete
 
-  CloudTrailS3:
-    Type: AWS::S3::Bucket
-    Properties:
-      #AccessControl: Private
-      BucketName: da-wallingtonp-cloud-trail
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls : true
-        BlockPublicPolicy : true
-        IgnorePublicAcls : true
-        RestrictPublicBuckets : true
-    DeletionPolicy: Delete
-
-  ##############################
-  ### S3 Cloud Trail Bucket Policy ####
-  ##############################
-  S3CloudTrailBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: CloudTrailS3
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AWSCloudTrailAclCheck"
-            Effect: "Allow"
-            Principal:
-              Service: "cloudtrail.amazonaws.com"
-            Action: "s3:GetBucketAcl"
-            Resource:
-              !Sub |-
-              arn:aws:s3:::${CloudTrailS3}
-          - Sid: "AWSCloudTrailWrite"
-            Effect: "Allow"
-            Principal:
-              Service: "cloudtrail.amazonaws.com"
-            Action: "s3:PutObject"
-            Resource:
-              !Sub |-
-              arn:aws:s3:::${CloudTrailS3}/AWSLogs/${AWS::AccountId}/*
-            Condition:
-              StringEquals:
-                s3:x-amz-acl: "bucket-owner-full-control"
-
-  ##############################
-  ### Lamdba Functions ####
-  ##############################
-  InvokeSnowflakeLoadFromS3Event:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: invoke-snowflake-load-from-s3-event
-      Role: !GetAtt SnowflakeLamdbaRole.Arn
-      CodeUri: lamdba/
-      Handler: app.invoke_snowflake_load_from_s3_event
-      Runtime: python3.7
-      MemorySize: 1024
-      Timeout: 60
-      Events:
-        # https://github.com/awslabs/serverless-application-model/issues/124z
-        # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#s3
-        #BucketEvent:
-        #  Type: S3
-        #  Properties:
-        #    Bucket: !Ref OutputAreaJsonS3
-        #    Events:
-        #      - s3:ObjectCreated:Put
-        #    Filter:
-        #      S3Key:
-        #        Rules:
-        #          - Name: suffix
-        #            Value: .json
-      Environment:
-        Variables:
-          env: dev
-
-
-  InvokeSnowflakeLoadFromCloudWatchEvent:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: invoke-snowflake-load-from-cloudwatch-event
-      Role: !GetAtt SnowflakeLamdbaRole.Arn
-      CodeUri: lamdba/
-      Handler: app.invoke_snowflake_load_from_cloudwatch_event
-      Runtime: python3.7
-      MemorySize: 1024
-      Timeout: 60
-      Environment:
-        Variables:
-          env: dev
-
-  #InvokeStepFunction:
-#    Type: AWS::Serverless::Function
-#    Properties:
-#      FunctionName: invoke_step_function-py
-#      Role: !GetAtt SnowflakeLamdbaRole.Arn
-#      CodeUri: lamdba/
-#      Handler: app.invoke_step_function
-#      Runtime: python3.7
-#      MemorySize: 1024
-#      Timeout: 60
-#      Environment:
-#        Variables:
-#          env: dev
-
-  ##############################
-  ### Lamdba Permissions ####
-  ##############################
-  LambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt InvokeSnowflakeLoadFromS3Event.Arn
-      Action: lambda:InvokeFunction
-      Principal: s3.amazonaws.com
-      SourceAccount: !Sub ${AWS::AccountId}
-      SourceArn: !GetAtt OutputAreaJsonS3.Arn
-          
-  ##############################
-  ### State Machines ####
-  ##############################
-  SnowflakeLoadStepFunction:
-    Type: AWS::StepFunctions::StateMachine
-    Properties:
-      StateMachineName: !Join [ "-", [!Ref "AWS::Region", "invoke-snowflake-load"] ]
-      RoleArn: !GetAtt SnowflakeStepFunctionRole.Arn
-      DefinitionString:
-        Fn::Sub:
-          - |-
-            {
-              "Comment": "",
-              "StartAt": "InvokeSnowflakeLoad",
-              "States": {
-                "InvokeSnowflakeLoad": {
-                  "Type": "Task",
-                  "Resource": "${InvokeSnowflakeLoadFromCloudWatchEventArn}",
-                  "End": true
-               }
-              }
-            }
-          -
-            InvokeSnowflakeLoadFromCloudWatchEventArn: !GetAtt [ InvokeSnowflakeLoadFromCloudWatchEvent, Arn ]
-
-  ##############################
-  ### Cloud Watch Events Rule ####
-  ##############################
-  SnowflakeLoadStepFunctionCloudWatchEventRule:
-    Type: AWS::Events::Rule
-    # Description: !Sub 'Launch ${SnowflakeLoadStepFunction} when files are added to ${OutputAreaJsonS3}'
-    Properties:
-      Name: !Join [ "-", [!Ref "AWS::Region", "snowflake-load-step-function-cloud-watch-event-rule"] ]
-      EventPattern:
-        source:
-          - aws.s3
-        detail-type:
-          - 'AWS API Call via CloudTrail'
-        detail:
-          eventSource:
-            - s3.amazonaws.com
-          eventName:
-            - PutObject
-          requestParameters:
-            bucketName:
-              - !Ref OutputAreaJsonS3
-      Targets:
-        -
-          Arn: !Ref SnowflakeLoadStepFunction
-          Id: SnowflakeLoadStepFunctionTarget
-          RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/${SnowflakeStepFunctionEventRole}'
-
-  ##############################
-  ### Cloud Trail ####
-  ##############################
-  SnowflakeLoadCloudTrail:
-    DependsOn:
-      - S3CloudTrailBucketPolicy
-    Type: AWS::CloudTrail::Trail
-    Properties:
-      TrailName: !Join [ "-", [!Ref "AWS::Region", "invoke-snowflake-load-step-function-from-s3-event"] ]
-      IsMultiRegionTrail: true
-      IncludeGlobalServiceEvents: true
-      IsLogging: true
-      S3BucketName: !Ref CloudTrailS3
-      EventSelectors:
-        - ReadWriteType: WriteOnly
-          IncludeManagementEvents: false
-          DataResources:
-            - Type: AWS::S3::Object
-              Values:
-                - !Join [ "", [ !GetAtt [ OutputAreaJsonS3, Arn ], "/"]]
-
 
   ##############################
   ### Policies and Roles ####
   ##############################
-  SnowflakeLamdbaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-test-role"] ]
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonSQSFullAccess
-      - arn:aws:iam::aws:policy/AmazonS3FullAccess
-      - arn:aws:iam::aws:policy/AWSLambdaExecute
-      Policies:
-      - PolicyName: SystemsManagerGetParameter
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            Effect: Allow
-            Action:
-            - ssm:GetParameterHistory
-            - ssm:GetParametersByPath
-            - ssm:GetParameters
-            - ssm:GetParameter
-            Resource: "*"
-
-  SnowflakeStepFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-role"] ]
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - states.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonSQSFullAccess
-      Policies:
-      - PolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-invoke-lambda-policy"] ]
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            Effect: Allow
-            Action:
-            - lambda:InvokeFunction
-            Resource: "*"
 
   ### https://docs:snowflake:
   ###    net/manuals/user-guide/data-load-s3-config:
@@ -289,42 +65,38 @@ Resources:
             - s3:GetObjectVersion
           Resource:
             - "arn:aws:s3:::tfgm-da-segmentation-postcode-output-area/*"
-            - "arn:aws:s3:::tfgm-da-segmentation-output-area-polygon/*"
         - Effect: Allow
           Action:
             - s3:ListBucket
           Resource:
             - "arn:aws:s3:::tfgm-da-segmentation-postcode-output-area/*"
-            - "arn:aws:s3:::tfgm-da-segmentation-output-area-polygon/*"
           Condition:
             StringLike:
               s3:prefix:
               - "*"
 
-  SnowflakeStepFunctionEventRole:
+  SnowflakeUserRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Join [ "-", [!Ref "AWS::Region", "snowflake-s3-access-role", !Ref SnowflakeLandingS3] ]
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+      # Policy Document to allow snowflake to assume the role
+        Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - events.amazonaws.com
-          Action:
-            - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - !Ref SnowflakeStepFunctionEventPolicy
+          - Effect: Allow
+            Principal:
+              AWS: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-iam-user}}"
+                #- !If
+                #  - HasSnowflakeIamUser
+                #  - "arn:aws:iam::213245706025:user/1wy3-s-iess2927"
+                #  - !Ref 'AWS::AccountId'
+            Action: sts:AssumeRole
+            Condition:
+              StringLike:
+                sts:ExternalId: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-aws-external-id}}"
 
-  SnowflakeStepFunctionEventPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-event-policy"] ]
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: "Allow"
-          Action:
-            - "states:StartExecution"
-          Resource:
-            - !Ref SnowflakeLoadStepFunction
+
+Outputs:
+  SnowflakeARN:
+    Value: !GetAtt SnowflakeUserRole.Arn
+    Description: ARN of user role

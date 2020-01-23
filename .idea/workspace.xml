@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/da-snowflake-test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/da-snowflake-test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_script.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/copy-test-file-to-s3.sh" beforeDir="false" afterPath="$PROJECT_DIR$/copy-test-file-to-s3.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event.json" beforeDir="false" afterPath="$PROJECT_DIR$/event.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
@@ -32,7 +34,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HCL" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/event.json" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager" selected="AWS Lambda.[Remote] invoke-snowflake-load-from-cloudwatch-event">
@@ -99,14 +101,23 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575470186696">
+    <state x="597" y="152" key="#Notifications" timestamp="1579006183270">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="597" y="152" key="#Notifications/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579006183270" />
+    <state x="443" y="141" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579004387696">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="443" y="141" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579004387696" />
     <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575470186696" />
-    <state x="619" y="279" key="FileChooserDialogImpl" timestamp="1576238088543">
+    <state x="685" y="228" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1579006045995">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="619" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1576238088543" />
+    <state x="685" y="228" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579006045995" />
+    <state x="619" y="279" key="FileChooserDialogImpl" timestamp="1579004270673">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="619" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579004270673" />
     <state width="797" height="302" key="GridCell.Tab.0.bottom" timestamp="1575474107837">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

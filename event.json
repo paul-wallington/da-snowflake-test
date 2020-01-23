@@ -1,38 +1,57 @@
-{  
-   "Records":[  
-      {  
-         "eventVersion":"2.1",
-         "eventSource":"aws:s3",
-         "awsRegion":"eu-west-2",
-         "eventTime":"2019-11-15T11:23:32.493Z",
-         "eventName":"ObjectCreated:Put",
-         "userIdentity":{  
-            "principalId":"AWS:AIDAJJ3U674JG4ZU3QOES"
-         },
-         "requestParameters":{  
-            "sourceIPAddress":"62.255.235.107"
-         },
-         "responseElements":{  
-            "x-amz-request-id":"A71D56D46AE101D8",
-            "x-amz-id-2":"grY0iV0axpiHhrK1nwmzXv7nAyDopKwcN1NlJ3WNn6S1+di8T7UFAQBAFCvHyxOYHuklaQpFVCM="
-         },
-         "s3":{  
-            "s3SchemaVersion":"1.0",
-            "configurationId":"249c06df-3d34-4032-a14b-d88328c280e5",
-            "bucket":{  
-               "name":"tfgm-wallingtonp-test",
-               "ownerIdentity":{  
-                  "principalId":"ARO6KFIWQZG8Y"
-               },
-               "arn":"arn:aws:s3:::tfgm-wallingtonp-test"
-            },
-            "object":{  
-               "key":"stg/OutputAreaJson/test.json",
-               "size":190553,
-               "eTag":"8a47f55ad5f5597f141fabbeb8685fdc",
-               "sequencer":"005DCE8AB41EE31399"
-            }
-         }
+{
+  "version": "0",
+  "id": "e9e7d444-3bd5-4b33-69ba-740923c2f68d",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.s3",
+  "account": "177539856531",
+  "time": "2019-12-04T10:08:45Z",
+  "region": "eu-west-2",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.05",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAJJ3U674JG4ZU3QOES",
+      "arn": "arn:aws:iam::177539856531:user/pwallington",
+      "accountId": "177539856531",
+      "accessKeyId": "AKIASSVRTHCJ3QGM2N5M",
+      "userName": "pwallington"
+    },
+    "eventTime": "2019-12-04T10:08:45Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "PutObject",
+    "awsRegion": "eu-west-2",
+    "sourceIPAddress": "62.255.235.107",
+    "userAgent": "[aws-cli/1.16.288 Python/3.7.5 Linux/4.14.154-boot2docker exec-env/AWS_Lambda_python3.7 botocore/1.13.24]",
+    "requestParameters": {
+      "bucketName": "da-snowflake-landing",
+      "Host": "da-snowflake-landing.s3.eu-west-2.amazonaws.com",
+      "key": "stg/OutputAreaJson/test.json"
+    },
+    "responseElements": null,
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 190553,
+      "AuthenticationMethod": "AuthHeader",
+      "x-amz-id-2": "Kczd/MRaHMpzniRfG5TLZBktAC8NxLdE25O8SzmSLegopLtNeGpr79Fbi76+6TVEg76oDJRs5eo=",
+      "bytesTransferredOut": 0
+    },
+    "requestID": "0F2124E1EED0538F",
+    "eventID": "51f74d90-9803-47c5-b46d-2a938b82aacc",
+    "readOnly": false,
+    "resources": [
+      {
+        "type": "AWS::S3::Object",
+        "ARN": "arn:aws:s3:::da-snowflake-landing/stg/OutputAreaJson/test.json"
+      },
+      {
+        "accountId": "177539856531",
+        "type": "AWS::S3::Bucket",
+        "ARN": "arn:aws:s3:::da-snowflake-landing"
       }
-   ]
+    ],
+    "eventType": "AwsApiCall",
+    "recipientAccountId": "177539856531"
+  }
 }
