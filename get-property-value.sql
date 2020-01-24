@@ -1,7 +1,4 @@
-!set output_format=plain;
 !set echo=False;
-DESC STORAGE INTEGRATION tfgm_da_snowflake_landing_integration;
-
 SET
    QUERYID = 
    (
@@ -21,5 +18,5 @@ SET
    );
 
 
-SELECT "property_value" FROM table(result_scan($QUERYID))
+SELECT "property_value" FROM table(result_scan(last_query_id()))
 WHERE "property" = 'STORAGE_AWS_IAM_USER_ARN';

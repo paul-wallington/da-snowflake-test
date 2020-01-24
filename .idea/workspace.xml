@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/input_script.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/copy-test-file-to-s3.sh" beforeDir="false" afterPath="$PROJECT_DIR$/copy-test-file-to-s3.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/event.json" beforeDir="false" afterPath="$PROJECT_DIR$/event.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.bash_profile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input_script.sql" beforeDir="false" afterPath="$PROJECT_DIR$/input_script.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/snowsql-install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/snowsql-install.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

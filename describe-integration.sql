@@ -1,0 +1,1 @@
+DESC STORAGE INTEGRATION tfgm_da_snowflake_landing_integration;

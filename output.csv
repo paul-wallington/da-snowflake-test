@@ -1,7 +1,0 @@
-"ENABLED","Boolean","true","false"
-"STORAGE_ALLOWED_LOCATIONS","List","s3://da-snowflake-landing","[]"
-"STORAGE_BLOCKED_LOCATIONS","List","","[]"
-"STORAGE_AWS_IAM_USER_ARN","String","arn:aws:iam::213245706025:user/1wy3-s-iess2927",""
-"STORAGE_AWS_ROLE_ARN","String","arn:aws:iam::177539856531:role/eu-west-2-tfgm-da-snowflake-s3-access-role-da-snowflake-landing",""
-"STORAGE_AWS_EXTERNAL_ID","String","IK47054_SFCRole=2_WMe2nBFlcau6mO3TImVPhdcU6SE=",""
-"arn:aws:iam::213245706025:user/1wy3-s-iess2927"

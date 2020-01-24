@@ -1,6 +1,3 @@
-#!/bin/bash
-echo "Change directory to root..."
-cd ~/
 echo "Create .bash_profile..."
 touch .bash_profile
 echo "Get snowsql bash install script..."
@@ -15,7 +12,6 @@ echo "Reset shell..."
 tset
 echo "Remove snowsql bash install script..."
 rm snowsql-1.1.86-linux_x86_64.bash
-
 # https://askubuntu.com/questions/53177/bash-script-to-set-environment-variables-not-working
 echo "Populate SNOWSQL_ACCOUNT environment variable..."
 export SNOWSQL_ACCOUNT=$(aws ssm get-parameter --name /snowflake/dev/ac-param --query Parameter.Value | cut -d '"' -f 2)
