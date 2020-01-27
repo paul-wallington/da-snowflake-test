@@ -1,3 +1,5 @@
+echo "Change directory to root..."
+cd ~/
 echo "Create .bash_profile..."
 touch .bash_profile
 echo "Get snowsql bash install script..."
@@ -25,3 +27,7 @@ echo "Populate SNOWSQL_DATABASE environment variable..."
 export SNOWSQL_DATABASE=$(aws ssm get-parameter --name /snowflake/dev/db-param --query Parameter.Value | cut -d '"' -f 2)
 echo "Populate SNOWSQL_SCHEMA environment variable..." 
 export SNOWSQL_SCHEMA=$(aws ssm get-parameter --name /snowflake/dev/schema-param --query Parameter.Value | cut -d '"' -f 2)
+snowsql -f /var/task/describe-integration.sql
+snowsql STORAGE_AWS_IAM_USER_ARN=$(snowsql -f /var/task/get-property-value.sql)
+echo $STORAGE_AWS_IAM_USER_ARN
+cd /var/task/
