@@ -1,7 +1,9 @@
+!set quiet=true;
 !set echo=false;
 !set friendly=false;
 !set header=false;
 !set timing=false;
+
 SET
    QUERYID = 
    (
@@ -13,3 +15,6 @@ SET
 
 SELECT "property_value" FROM table(result_scan($QUERYID))
 WHERE "property" = 'STORAGE_AWS_IAM_USER_ARN';
+
+SELECT "property_value" FROM table(result_scan($QUERYID))
+WHERE "property" = 'STORAGE_AWS_EXTERNAL_ID';
