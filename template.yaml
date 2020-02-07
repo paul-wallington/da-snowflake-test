@@ -85,7 +85,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-iam-user}}"
+              AWS: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-storage-aws-iam-user-arn}}"
                 #- !If
                 #  - HasSnowflakeIamUser
                 #  - "arn:aws:iam::213245706025:user/1wy3-s-iess2927"
@@ -93,7 +93,7 @@ Resources:
             Action: sts:AssumeRole
             Condition:
               StringLike:
-                sts:ExternalId: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-aws-external-id}}"
+                sts:ExternalId: "{{resolve:secretsmanager:tfgm_da_snowflake_landing_integration:SecretString:snowflake-storage-aws-external-id}}"
 
 
 Outputs:
