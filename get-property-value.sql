@@ -9,7 +9,7 @@ SET
    (
       SELECT TOP 1 QUERY_ID::VARCHAR
         FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())
-        WHERE QUERY_TEXT = 'DESC STORAGE INTEGRATION tfgm_da_snowflake_landing_integration;' 
+        WHERE QUERY_TEXT = 'DESC STORAGE INTEGRATION da_snowflake_landing_integration;' 
       ORDER BY start_time DESC
    );
 

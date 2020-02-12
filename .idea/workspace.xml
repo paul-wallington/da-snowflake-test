@@ -2,7 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/install-snowsql.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/set-snowsql-credentials.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/describe-integration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/describe-integration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get-property-value.sql" beforeDir="false" afterPath="$PROJECT_DIR$/get-property-value.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lamdba/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/put-json-secret.sh" beforeDir="false" afterPath="$PROJECT_DIR$/put-json-secret.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snowsql-install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/snowsql-install.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +37,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HCL" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/event.json" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../da-aws-python" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager" selected="AWS Lambda.[Remote] invoke-snowflake-load-from-cloudwatch-event">
@@ -36,8 +45,8 @@
       <option name="credentialProviderId" value="profile:default" />
       <option name="regionId" value="eu-west-2" />
       <option name="functionName" value="invoke-snowflake-load-from-cloudwatch-event" />
-      <option name="input" value="{&#10;  &quot;version&quot;: &quot;0&quot;,&#10;  &quot;id&quot;: &quot;e9e7d444-3bd5-4b33-69ba-740923c2f68d&quot;,&#10;  &quot;detail-type&quot;: &quot;AWS API Call via CloudTrail&quot;,&#10;  &quot;source&quot;: &quot;aws.s3&quot;,&#10;  &quot;account&quot;: &quot;177539856531&quot;,&#10;  &quot;time&quot;: &quot;2019-12-04T10:08:45Z&quot;,&#10;  &quot;region&quot;: &quot;eu-west-2&quot;,&#10;  &quot;resources&quot;: [],&#10;  &quot;detail&quot;: {&#10;    &quot;eventVersion&quot;: &quot;1.05&quot;,&#10;    &quot;userIdentity&quot;: {&#10;      &quot;type&quot;: &quot;IAMUser&quot;,&#10;      &quot;principalId&quot;: &quot;AIDAJJ3U674JG4ZU3QOES&quot;,&#10;      &quot;arn&quot;: &quot;arn:aws:iam::177539856531:user/pwallington&quot;,&#10;      &quot;accountId&quot;: &quot;177539856531&quot;,&#10;      &quot;accessKeyId&quot;: &quot;AKIASSVRTHCJ3QGM2N5M&quot;,&#10;      &quot;userName&quot;: &quot;pwallington&quot;&#10;    },&#10;    &quot;eventTime&quot;: &quot;2019-12-04T10:08:45Z&quot;,&#10;    &quot;eventSource&quot;: &quot;s3.amazonaws.com&quot;,&#10;    &quot;eventName&quot;: &quot;PutObject&quot;,&#10;    &quot;awsRegion&quot;: &quot;eu-west-2&quot;,&#10;    &quot;sourceIPAddress&quot;: &quot;62.255.235.107&quot;,&#10;    &quot;userAgent&quot;: &quot;[aws-cli/1.16.288 Python/3.7.5 Linux/4.14.154-boot2docker exec-env/AWS_Lambda_python3.7 botocore/1.13.24]&quot;,&#10;    &quot;requestParameters&quot;: {&#10;      &quot;bucketName&quot;: &quot;da-wallingtonp-test&quot;,&#10;      &quot;Host&quot;: &quot;da-wallingtonp-test.s3.eu-west-2.amazonaws.com&quot;,&#10;      &quot;key&quot;: &quot;stg/OutputAreaJson/test.json&quot;&#10;    },&#10;    &quot;responseElements&quot;: null,&#10;    &quot;additionalEventData&quot;: {&#10;      &quot;SignatureVersion&quot;: &quot;SigV4&quot;,&#10;      &quot;CipherSuite&quot;: &quot;ECDHE-RSA-AES128-GCM-SHA256&quot;,&#10;      &quot;bytesTransferredIn&quot;: 190553,&#10;      &quot;AuthenticationMethod&quot;: &quot;AuthHeader&quot;,&#10;      &quot;x-amz-id-2&quot;: &quot;Kczd/MRaHMpzniRfG5TLZBktAC8NxLdE25O8SzmSLegopLtNeGpr79Fbi76+6TVEg76oDJRs5eo=&quot;,&#10;      &quot;bytesTransferredOut&quot;: 0&#10;    },&#10;    &quot;requestID&quot;: &quot;0F2124E1EED0538F&quot;,&#10;    &quot;eventID&quot;: &quot;51f74d90-9803-47c5-b46d-2a938b82aacc&quot;,&#10;    &quot;readOnly&quot;: false,&#10;    &quot;resources&quot;: [&#10;      {&#10;        &quot;type&quot;: &quot;AWS::S3::Object&quot;,&#10;        &quot;ARN&quot;: &quot;arn:aws:s3:::da-wallingtonp-test/stg/OutputAreaJson/test.json&quot;&#10;      },&#10;      {&#10;        &quot;accountId&quot;: &quot;177539856531&quot;,&#10;        &quot;type&quot;: &quot;AWS::S3::Bucket&quot;,&#10;        &quot;ARN&quot;: &quot;arn:aws:s3:::da-wallingtonp-test&quot;&#10;      }&#10;    ],&#10;    &quot;eventType&quot;: &quot;AwsApiCall&quot;,&#10;    &quot;recipientAccountId&quot;: &quot;177539856531&quot;&#10;  }&#10;}" />
-      <option name="inputIsFile" value="false" />
+      <option name="input" value="E:\Git\da-snowflake-test\event.json" />
+      <option name="inputIsFile" value="true" />
       <method v="2" />
     </configuration>
     <configuration name="[Remote] invoke-snowflake-load-from-s3-event" type="aws.lambda" factoryName="Remote">
@@ -99,34 +108,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="597" y="152" key="#Notifications/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579006183270" />
-    <state x="443" y="141" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579004387696">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="2044" y="124" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581514209564">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="443" y="141" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579004387696" />
+    <state x="2044" y="124" width="1455" height="769" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581514209564" />
     <state x="309" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575470186696" />
     <state x="685" y="228" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1579006045995">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="685" y="228" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579006045995" />
-    <state x="619" y="279" key="FileChooserDialogImpl" timestamp="1579004270673">
+    <state x="619" y="279" key="FileChooserDialogImpl" timestamp="1581516954253">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="619" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1579004270673" />
-    <state width="797" height="302" key="GridCell.Tab.0.bottom" timestamp="1575474107837">
+    <state x="619" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581516954253" />
+    <state width="1603" height="226" key="GridCell.Tab.0.bottom" timestamp="1581520671668">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1603" height="226" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581520671668" />
     <state width="797" height="302" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
-    <state width="797" height="302" key="GridCell.Tab.0.center" timestamp="1575474107837">
+    <state width="1603" height="226" key="GridCell.Tab.0.center" timestamp="1581520671668">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1603" height="226" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581520671668" />
     <state width="797" height="302" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
-    <state width="797" height="302" key="GridCell.Tab.0.left" timestamp="1575474107836">
+    <state width="1603" height="226" key="GridCell.Tab.0.left" timestamp="1581520671668">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1603" height="226" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581520671668" />
     <state width="797" height="302" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107836" />
-    <state width="797" height="302" key="GridCell.Tab.0.right" timestamp="1575474107837">
+    <state width="1603" height="226" key="GridCell.Tab.0.right" timestamp="1581520671668">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1603" height="226" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1581520671668" />
     <state width="797" height="302" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1080@0.0.1920.1040" timestamp="1575474107837" />
     <state x="340" y="167" key="SettingsEditor" timestamp="1576678160839">
       <screen x="0" y="0" width="1920" height="1040" />

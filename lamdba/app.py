@@ -238,7 +238,8 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
             print(sql)
             Functions.execute_query(conn, sql)
 
-            sql = "copy into " + schema + ".OutputAreaJson from @" + str.replace(bucket, "-", "_") + "/" + key + \
+            sql = "copy into " + schema + ".OutputAreaJson from @" \
+                  + str.replace(bucket, "-", "_") + "/" + key[key.rindex('/')+1:len(key)] + \
                   " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
             print(sql)
             Functions.execute_query(conn, sql)
