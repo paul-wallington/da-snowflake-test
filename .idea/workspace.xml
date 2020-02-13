@@ -2,16 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a721bbf0-f070-43f2-9aec-63c3e72556d3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/install-snowsql.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/set-snowsql-credentials.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/describe-integration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/describe-integration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get-current-database.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/get-output.sh" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/get-property-value.sql" beforeDir="false" afterPath="$PROJECT_DIR$/get-property-value.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lamdba/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lamdba/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/lamdba/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/put-json-secret.sh" beforeDir="false" afterPath="$PROJECT_DIR$/put-json-secret.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/snowsql-install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/snowsql-install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input_script.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/snowsql-install.sh" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

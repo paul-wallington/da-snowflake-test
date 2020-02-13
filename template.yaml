@@ -150,7 +150,7 @@ Resources:
   ##############################
   SnowflakeLoadStepFunctionCloudWatchEventRule:
     Type: AWS::Events::Rule
-    # Description: !Sub 'Launch ${SnowflakeLoadStepFunction} when files are added to ${SnowflakeLandingS3}'
+    Description: "Launch ${SnowflakeLoadStepFunction} when files are added to ${SnowflakeLandingS3}"
     Properties:
       Name: !Join [ "-", [!Ref "AWS::Region", "snowflake-load-step-function-cloud-watch-event-rule"] ]
       EventPattern:
@@ -244,7 +244,7 @@ Resources:
       Policies:
       - PolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-invoke-lambda-policy"] ]
         PolicyDocument:
-          Version: '2012-10-17'
+          Version: "2012-10-17"
           Statement:
             Effect: Allow
             Action:
@@ -258,11 +258,13 @@ Resources:
     # Policy to grant Snowflake permissions.
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      Description: "Policy to allow Read and Write access to objects in ${SnowflakeLandingS3} S3 bucket."
       ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-s3-stage-policy"] ]
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Effect: Allow
+        - Sid: "PutGetDeleteObjectsInBucket"
+          Effect: Allow
           Action:
             # PutObject required if exporting data from Snowflake to S3
             - s3:PutObject
@@ -273,21 +275,20 @@ Resources:
             - s3:DeleteObjectVersion
             - s3:DeleteObject
           Resource:
-          #  - "arn:aws:s3:::tfgm-da-segmentation-postcode-output-area/*"
-          #   - !Join [ "", [ !GetAtt [ SnowflakeLandingS3, Arn ], "/*"]]
-            - "arn:aws:s3:::da-snowflake-landing/stg/OutputAreaJson/*"
-        - Effect: Allow
+             - !Join [ "", [ !GetAtt [ SnowflakeLandingS3, Arn ], "/*"]]
+        - Sid: "ListObjectsInBucket"
+          Effect: Allow
           Action:
             - s3:ListBucket
           Resource:
-          #  - "arn:aws:s3:::tfgm-da-segmentation-postcode-output-area/*"
-          #  - !Join [ "", [ !GetAtt [ SnowflakeLandingS3, Arn ], "/*"]]
-            - "arn:aws:s3:::da-snowflake-landing"
-          Condition:
-            StringLike:
-              s3:prefix:
-              - "stg/OutputAreaJson/*"
+             - !GetAtt [ SnowflakeLandingS3, Arn ]
+          #  - "arn:aws:s3:::da-snowflake-landing"
+          #Condition:
+          #  StringLike:
+          #    s3:prefix:
+          #    - "stg/OutputAreaJson/*"
 
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/dynamic-references.html#dynamic-references-secretsmanager
   SnowflakeUserRole:
     Type: AWS::IAM::Role
     Properties:
@@ -310,6 +311,7 @@ Resources:
   SnowflakeStepFunctionEventRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-event-role"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -325,6 +327,7 @@ Resources:
   SnowflakeStepFunctionEventPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      Description: "Policy to allow execution of ${SnowflakeLoadStepFunction} step function."
       ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-event-policy"] ]
       PolicyDocument:
         Version: "2012-10-17"
