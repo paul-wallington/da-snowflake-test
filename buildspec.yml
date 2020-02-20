@@ -13,10 +13,10 @@ phases:
       - sam build --build-dir ~/
       - cd ~/
       - export SAM_CLI_TELEMETRY=0
-      - sam package --output-template-file ~/packaged-template.yaml --s3-bucket tfgm-da-lamdba --s3-prefix "da-snowflake-test"
+      - sam package --output-template-file packaged-template.yaml --s3-bucket tfgm-da-lamdba --s3-prefix "da-snowflake-test"
       - ls -a
       - cd $CODEBUILD_SRC_DIR
 artifacts:
   type: zip
   files:
-    - ~/packaged-template.yaml
+    - packaged-template.yaml
