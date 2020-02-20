@@ -6,6 +6,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - pip3 install --upgrade pip
       - dir -a
       - REQUIREMENTS=$(find . -type f -iname "requirements.txt")
       - pip3 install -r $REQUIREMENTS --upgrade
@@ -15,8 +16,7 @@ phases:
       - sam package --output-template-file ~/packaged-template.yaml --s3-bucket tfgm-da-lamdba --s3-prefix "da-snowflake-test"
       - ls -a
       - cd $CODEBUILD_SRC_DIR
-      - ls -a
 artifacts:
   type: zip
   files:
-    - packaged-template.yaml
+    - ~/packaged-template.yaml
