@@ -8,6 +8,9 @@ phases:
       - echo Build started on `date`
       - pwd
       - dir -a
+      - cd /~
+      - pwd
+      - dir -a      
 artifacts:
   type: zip
   files:
