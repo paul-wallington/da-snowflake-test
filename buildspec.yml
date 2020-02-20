@@ -8,7 +8,7 @@ phases:
       - echo Build started on `date`
       - pwd
       - dir -a
-      - cd /~
+      - cd ~/
       - pwd
       - dir -a      
 artifacts:
