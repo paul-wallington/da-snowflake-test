@@ -6,10 +6,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - pip3 install --upgrade pip
-      - REQUIREMENTS=$(find /var/task -type f -iname "requirements.txt")
-      - pip3 install -r $REQUIREMENTS --upgrade               ## ## Installs to /var/lang/lib/python3.7/site-packages
-      - sam build --build-dir ~/      
+      - pwd
+      - dir -a
 artifacts:
   type: zip
   files:
