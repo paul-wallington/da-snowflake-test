@@ -86,9 +86,7 @@ Resources:
       TargetPipeline: !Ref CodePipeline
       TargetAction: Source
       Name: CodePipelineWebhook
-      TargetPipelineVersion: !GetAtt 
-        - CodePipeline
-        - Version
+      TargetPipelineVersion: !GetAtt CodePipeline.Version
       RegisterWithThirdParty: true
 
   ##############################
