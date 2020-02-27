@@ -19,6 +19,8 @@ Parameters:
 Resources:
   CodePipelineArtifactStoreBucket:
     Type: AWS::S3::Bucket
+    Properties:
+      BucketName: da-snowflake-code-pipeline-artifacts
   CodePipelineArtifactStoreBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
