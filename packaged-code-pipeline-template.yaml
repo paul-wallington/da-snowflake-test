@@ -75,6 +75,36 @@ Resources:
         - CodePipeline
         - Version
       RegisterWithThirdParty: true
+  CodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::Region
+          - da-snowflake-lambda-code-build_cftest
+      Description: Will build project lambda binaries using sam build in lambda_snowsql
+        docker image
+      ServiceRole:
+        Fn::GetAtt:
+        - CodeBuildServiceRole
+        - Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+      Environment:
+        Image: lamdba_snowsql:build-python3.7
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -137,7 +167,7 @@ Resources:
         Fn::Join:
         - '-'
         - - Ref: AWS::Region
-          - da-snowflake-lambda-code-pipeline-service-role
+          - da-snowflake-lambda-code-pipeline-service-role-cftest
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -153,7 +183,7 @@ Resources:
           Fn::Join:
           - '-'
           - - Ref: AWS::Region
-            - da-snowflake-lambda-code-pipeline-service-role-policy
+            - da-snowflake-lambda-code-pipeline-service-role-policy-cftest
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -262,3 +292,103 @@ Resources:
             Action:
             - ecr:DescribeImages
             Resource: '*'
+  CodeBuildServiceRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy used in trust relationship with CodeBuild.
+      ManagedPolicyName:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::Region
+          - da-snowflake-lamdba-code-build-base-policy-cftest
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource:
+          - Fn::Join:
+            - ''
+            - - arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/
+              - Ref: BuildName
+          - Fn::Join:
+            - ''
+            - - arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/
+              - Ref: BuildName
+              - :*
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:GetObjectVersion
+          - s3:GetBucketAcl
+          - s3:GetBucketLocation
+          Resource:
+          - arn:aws:s3:::tfgm-da-lamdba*
+          - Fn::GetAtt:
+            - CodePipelineArtifactStoreBucket
+            - Arn
+        - Effect: Allow
+          Resource:
+          - Fn::Join:
+            - ''
+            - - arn:aws:codebuild:eu-west-2:177539856531:report-group/
+              - Ref: BuildName
+              - -*
+          Action:
+          - codebuild:CreateReportGroup
+          - codebuild:CreateReport
+          - codebuild:UpdateReport
+          - codebuild:BatchPutTestCases
+  CodeBuildImageRepositoryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy used in trust relationship with CodeBuild.
+      ManagedPolicyName:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::Region
+          - da-snowflake-lamdba-code-build-image-repository-policy-cftest
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - ecr:GetAuthorizationToken
+          Resource:
+          - '*'
+        - Effect: Allow
+          Action:
+          - erc:BatchCheckLayerAvailability
+          - erc:GetDownloadUrlForLayer
+          - erc:BatchGetImage
+          - erc:PutImage
+          - erc:InitiateLayerUpload
+          - erc:UploadLayerPart
+          - erc:CompleteLayerUpload
+          Resource:
+          - arn:aws:ecr:eu-west-2:177539856531:repository/lambda_snowsql
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::Region
+          - da-snowflake-lamdba-code-build-service-role-cftest
+      Path: /service-role/
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - codebuild.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - Ref: CodeBuildServiceRolePolicy
+      - Ref: CodeBuildImageRepositoryPolicy

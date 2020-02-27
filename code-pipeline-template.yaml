@@ -27,6 +27,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: da-snowflake-code-pipeline-artifacts
+
   CodePipelineArtifactStoreBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -84,20 +85,21 @@ Resources:
   ##############################
   CodeBuild:
     Type: AWS::CodeBuild::Project
-      Properties:
-        Name:  !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-build_cftest"] ]
-        Description: Will build project lambda binaries using sam build in lambda_snowsql docker image
-        ServiceRole: !GetAtt CodeBuildServiceRole.Arn
-        Source:
-          Type: CODEPIPELINE
-          BuildSpec: buildspec.yml
-        Environment:
-          Image: lamdba_snowsql:build-python3.7
-          ImagePullCredentialsType: CODEBUILD
-          PrivilegedMode: true
-          Type: LINUX_CONTAINER
-        Artifacts:
-          Type: CODEPIPELINE
+    Properties:
+      Name:  !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-build_cftest"] ]
+      Description: Will build project lambda binaries using sam build in lambda_snowsql docker image
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+      Environment:
+        Image: lamdba_snowsql:build-python3.7
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+      Artifacts:
+        Type: CODEPIPELINE
       Cache: 
         Type: NO_CACHE
       LogsConfig: 
@@ -293,8 +295,10 @@ Resources:
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource:
-            - arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build
-            - arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build:*            
+            -  !Join [ "", ["arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/", !Ref BuildName] ]
+            -  !Join [ "", ["arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/", !Ref BuildName, ":*"] ]
+            #- arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build
+            #- arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build:*              
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -303,12 +307,13 @@ Resources:
             - s3:GetBucketAcl
             - s3:GetBucketLocation
           Resource:
-            - arn:aws:s3:::codepipeline-eu-west-2-*
             - arn:aws:s3:::tfgm-da-lamdba*
-            - arn:aws:s3:::da-snowflake-code-pipeline-artifacts*            
+            # - arn:aws:s3:::da-snowflake-code-pipeline-artifacts*
+            - !GetAtt CodePipelineArtifactStoreBucket.Arn
         - Effect: Allow
           Resource:
-            - arn:aws:codebuild:eu-west-2:177539856531:report-group/eu-west-2-da-snowflake-lambda-code-build-*         
+            #- arn:aws:codebuild:eu-west-2:177539856531:report-group/eu-west-2-da-snowflake-lambda-code-build-*  
+            -  !Join [ "", ["arn:aws:codebuild:eu-west-2:177539856531:report-group/", !Ref BuildName, "-*"] ]       
           Action:
             - codebuild:CreateReportGroup
             - codebuild:CreateReport
