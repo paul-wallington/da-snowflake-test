@@ -332,13 +332,13 @@ Resources:
             - s3:GetBucketAcl
             - s3:GetBucketLocation
           Resource:
-            - arn:aws:s3:::tfgm-da-lamdba*
+            # - arn:aws:s3:::tfgm-da-lamdba*
             # - arn:aws:s3:::da-snowflake-code-pipeline-artifacts*
             - !GetAtt CodePipelineArtifactStoreBucket.Arn
         - Effect: Allow
           Resource:
             #- arn:aws:codebuild:eu-west-2:177539856531:report-group/eu-west-2-da-snowflake-lambda-code-build-*  
-            -  !Join [ "", ["arn:aws:codebuild:eu-west-2:177539856531:report-group/", !Ref BuildName, "-*"] ]       
+            - !Join [ "", ["arn:aws:codebuild:eu-west-2:177539856531:report-group/", !Ref BuildName, "-*"] ]       
           Action:
             - codebuild:CreateReportGroup
             - codebuild:CreateReport
