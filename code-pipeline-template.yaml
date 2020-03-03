@@ -392,8 +392,7 @@ Resources:
   CodeDeployRole:
     Type: AWS::IAM::Role
     Properties:
-      # RoleName: !Join [ "-", ["da-snowflake-lamdba-code-deploy-role", !Ref "AWS::Region", "cftest"] ]
-      RoleName: CodeDeployRole
+      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-deploy-role", !Ref "AWS::Region", "cftest"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -404,8 +403,7 @@ Resources:
           Action:
           - sts:AssumeRole
       Policies:          
-      #- PolicyName:  !Join [ "-", ["da-snowflake-lamdba-code-deploy-policy", !Ref "AWS::Region", "cftest"] ]
-      - PolicyName:  CodeDeployPolicy
+      - PolicyName:  !Join [ "-", ["da-snowflake-lamdba-code-deploy-policy", !Ref "AWS::Region", "cftest"] ]
         PolicyDocument:      
           Version: '2012-10-17'
           Statement:
