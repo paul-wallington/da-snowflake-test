@@ -126,7 +126,7 @@ Resources:
   SnowflakeLoadStepFunction:
     Type: AWS::StepFunctions::StateMachine
     Properties:
-      StateMachineName: !Join [ "-", [!Ref "AWS::Region", "invoke-snowflake-load"] ]
+      StateMachineName: !Join [ "-", [ "invoke-snowflake-load", !Ref "AWS::Region"] ]
       RoleArn: !GetAtt SnowflakeStepFunctionRole.Arn
       DefinitionString:
         Fn::Sub:
@@ -152,7 +152,7 @@ Resources:
     Type: AWS::Events::Rule
     Description: "Launch ${SnowflakeLoadStepFunction} when files are added to ${SnowflakeLandingS3}"
     Properties:
-      Name: !Join [ "-", [!Ref "AWS::Region", "snowflake-load-step-function-cloud-watch-event-rule"] ]
+      Name: !Join [ "-", ["snowflake-load-step-function-cloud-watch-event-rule", !Ref "AWS::Region"] ]
       EventPattern:
         source:
           - aws.s3
@@ -180,7 +180,7 @@ Resources:
       - S3CloudTrailBucketPolicy
     Type: AWS::CloudTrail::Trail
     Properties:
-      TrailName: !Join [ "-", [!Ref "AWS::Region", "invoke-snowflake-load-step-function-from-s3-event"] ]
+      TrailName: !Join [ "-", ["invoke-snowflake-load-step-function-from-s3-event", !Ref "AWS::Region"] ]
       IsMultiRegionTrail: true
       IncludeGlobalServiceEvents: true
       IsLogging: true
@@ -199,14 +199,14 @@ Resources:
   SnowflakeLamdbaRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-role"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lambda-role", !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
         - Effect: Allow
           Principal:
             Service:
-            - lambda.amazonaws.com
+              - lambda.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
@@ -229,7 +229,7 @@ Resources:
   SnowflakeStepFunctionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-role"] ]
+      RoleName: !Join [ "-", ["da-snowflake-step-function-role", !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -242,7 +242,7 @@ Resources:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/AmazonSQSFullAccess
       Policies:
-      - PolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-invoke-lambda-policy"] ]
+      - PolicyName: !Join [ "-", ["da-snowflake-step-function-invoke-lambda-policy", !Ref "AWS::Region"] ]
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -259,7 +259,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy to allow Read and Write access to objects in ${SnowflakeLandingS3} S3 bucket."
-      ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-s3-stage-policy"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-s3-stage-policy", !Ref "AWS::Region"] ]
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -292,7 +292,7 @@ Resources:
   SnowflakeUserRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-s3-access-role", !Ref SnowflakeLandingS3] ]
+      RoleName: !Join [ "-", ["da-snowflake-s3-access-role", !Ref SnowflakeLandingS3, !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
       # Policy Document to allow snowflake to assume the role
         Version: '2012-10-17'
@@ -311,7 +311,7 @@ Resources:
   SnowflakeStepFunctionEventRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-event-role"] ]
+      RoleName: !Join [ "-", ["da-snowflake-step-function-event-role", !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -328,7 +328,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy to allow execution of ${SnowflakeLoadStepFunction} step function."
-      ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-step-function-event-policy"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-step-function-event-policy", !Ref "AWS::Region"] ]
       PolicyDocument:
         Version: "2012-10-17"
         Statement:

@@ -16,7 +16,11 @@ Parameters:
   BuildName:
     Description: CodeBuild name
     Type: String
-    Default: eu-west-2-da-snowflake-lambda-code-build    
+    Default: eu-west-2-da-snowflake-lambda-code-build
+  DeployStackName:
+    Description: Stack name for deployment
+    Type: String
+    Default: snowflake-testing
 
 Resources:
       
@@ -86,7 +90,7 @@ Resources:
   CodeBuild:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name:  !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-build_cftest"] ]
+      Name:  !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
       Description: Will build project lambda binaries using sam build in lambda_snowsql docker image
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Source:
@@ -112,7 +116,7 @@ Resources:
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name:  !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-pipeline-cftest"] ]
+      Name:  !Join [ "-", ["da-snowflake-lambda-code-pipeline", !Ref "AWS::Region", "cftest"] ]
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
       Stages:
         - Name: Source
@@ -148,9 +152,30 @@ Resources:
                 - Name: BuildArtifact 
               Region: !Ref AWS::Region
               RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: deploy-with-cloudformation            
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation                
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn: !GetAtt CodeDeployRole.Arn
+                StackName: !Ref DeployStackName
+                TemplatePath: "BuildArtifact::packaged-template.yaml"
+              InputArtifacts:
+                - Name: BuildArtifact
+              Region: !Ref AWS::Region
+              RunOrder: 2              
       ArtifactStore:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
+      DisableInboundStageTransitions: 
+        - StageName: Build 
+          Reason: "Disabling the transition on pipeline cloud formation deploy"        
 
 
   ##############################
@@ -159,7 +184,7 @@ Resources:
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-pipeline-service-role-cftest"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role", !Ref "AWS::Region", "cftest"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -171,7 +196,7 @@ Resources:
           - sts:AssumeRole          
       Path: /
       Policies:
-      - PolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lambda-code-pipeline-service-role-policy-cftest"] ]
+      - PolicyName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role-policy", !Ref "AWS::Region", "cftest"] ]
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -285,7 +310,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy used in trust relationship with CodeBuild."
-      ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lamdba-code-build-base-policy-cftest"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-base-policy", !Ref "AWS::Region", "cftest"] ]
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -324,7 +349,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy used in trust relationship with CodeBuild."
-      ManagedPolicyName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lamdba-code-build-image-repository-policy-cftest"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-image-repository-policy", !Ref "AWS::Region", "cftest"] ]
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -348,7 +373,7 @@ Resources:
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", [!Ref "AWS::Region", "da-snowflake-lamdba-code-build-service-role-cftest"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-build-service-role", !Ref "AWS::Region", "cftest"] ]
       # RoleName: !Join [ "-", [!Ref "AWS::StackName", "code-build-service-role-cftest", !Ref "AWS::Region"] ]
       Path: "/service-role/"
       AssumeRolePolicyDocument:
@@ -363,3 +388,67 @@ Resources:
       ManagedPolicyArns:
         - !Ref CodeBuildServiceRolePolicy
         - !Ref CodeBuildImageRepositoryPolicy
+
+  CodeDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      # RoleName: !Join [ "-", ["da-snowflake-lamdba-code-deploy-role", !Ref "AWS::Region", "cftest"] ]
+      RoleName: CodeDeployRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - cloudformation.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:          
+      #- PolicyName:  !Join [ "-", ["da-snowflake-lamdba-code-deploy-policy", !Ref "AWS::Region", "cftest"] ]
+      - PolicyName:  CodeDeployPolicy
+        PolicyDocument:      
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - ec2:AuthorizeSecurityGroupIngress
+            - ec2:DescribeSecurityGroups
+            - ec2:CreateSecurityGroup
+            - ec2:DescribeSecurityGroupReferences
+            - ec2:DeleteSecurityGroup
+            - ec2:DescribeStaleSecurityGroups            
+            - s3:CreateBucket
+            - s3:DeleteBucket            
+            - s3:GetBucketVersioning
+            - s3:PutObject
+            - s3:GetObject
+            - s3:PutBucketPolicy
+            - s3:GetObjectVersion                        
+            - iam:CreateRole
+            - iam:AttachRolePolicy
+            - iam:PutRolePolicy
+            - iam:PassRole            
+            - iam:DeleteRolePolicy            
+            - iam:GetRole
+            - iam:GetPolicy
+            - iam:DeleteRole
+            - iam:CreatePolicy
+            - iam:DetachRolePolicy            
+            - cloudformation:CreateChangeSet
+            - secretsmanager:GetSecretValue
+            - codedeploy:*
+            - apigateway:*            
+            - lambda:*
+            Resource: "*"          
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AWSCloudTrailFullAccess
+      - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/CloudWatchEventsFullAccess      
+
+
+
+
