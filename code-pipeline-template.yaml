@@ -16,7 +16,7 @@ Parameters:
   BuildName:
     Description: CodeBuild name
     Type: String
-    Default: eu-west-2-da-snowflake-lambda-code-build
+    Default: da-snowflake-lambda-code-build-eu-west-2-cftest
   DeployStackName:
     Description: Stack name for deployment
     Type: String
@@ -145,7 +145,7 @@ Resources:
                 Provider: CodeBuild                
                 Version: 1
               Configuration:
-                ProjectName: !Ref BuildName
+                ProjectName: BuildName
               InputArtifacts:
                 - Name: SourceArtifact
               OutputArtifacts:
@@ -173,9 +173,9 @@ Resources:
       ArtifactStore:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
-      DisableInboundStageTransitions: 
-        - StageName: Build 
-          Reason: "Disabling the transition on pipeline cloud formation deploy"        
+      #DisableInboundStageTransitions:
+      #  - StageName: Build 
+      #    Reason: "Disabling the transition on pipeline cloud formation deploy"        
 
 
   ##############################
