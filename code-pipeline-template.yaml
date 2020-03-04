@@ -145,7 +145,7 @@ Resources:
                 Provider: CodeBuild                
                 Version: 1
               Configuration:
-                ProjectName: BuildName
+                ProjectName: !Ref BuildName
               InputArtifacts:
                 - Name: SourceArtifact
               OutputArtifacts:
