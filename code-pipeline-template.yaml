@@ -14,7 +14,7 @@ Parameters:
   GitHubOwner:
     Type: String
   BuildName:
-    Description: CodeBuild name
+    Description: CodeBuild project name
     Type: String
     Default: da-snowflake-lambda-code-build-eu-west-2-cftest
   DeployStackName:
@@ -85,12 +85,12 @@ Resources:
       RegisterWithThirdParty: true
 
   ##############################
-  ### Code Build ####
+  ### Code Build Project ####
   ##############################
-  CodeBuild:
+  CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name:  !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
+      Name: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
       Description: Will build project lambda binaries using sam build in lambda_snowsql docker image
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Source:
@@ -98,7 +98,7 @@ Resources:
         BuildSpec: buildspec.yml
       Environment:
         Image: lamdba_snowsql:build-python3.7
-        ImagePullCredentialsType: CODEBUILD
+        ImagePullCredentialsType: SERVICE_ROLE
         PrivilegedMode: true
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
@@ -116,7 +116,7 @@ Resources:
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name:  !Join [ "-", ["da-snowflake-lambda-code-pipeline", !Ref "AWS::Region", "cftest"] ]
+      Name: !Join [ "-", ["da-snowflake-lambda-code-pipeline", !Ref "AWS::Region", "cftest"] ]
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
       Stages:
         - Name: Source
@@ -138,14 +138,14 @@ Resources:
               RunOrder: 1
         - Name: Build
           Actions:
-            - Name: build-with-cloudformation            
+            - Name: build-with-codebuild            
               ActionTypeId:
                 Category: Build
                 Owner: AWS
-                Provider: CodeBuild                
+                Provider: CodeBuild       
                 Version: 1
               Configuration:
-                ProjectName: !Ref BuildName
+                ProjectName: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
               InputArtifacts:
                 - Name: SourceArtifact
               OutputArtifacts:
@@ -169,13 +169,13 @@ Resources:
               InputArtifacts:
                 - Name: BuildArtifact
               Region: !Ref AWS::Region
-              RunOrder: 2              
+              RunOrder: 3              
       ArtifactStore:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
-      #DisableInboundStageTransitions:
-      #  - StageName: Build 
-      #    Reason: "Disabling the transition on pipeline cloud formation deploy"        
+      DisableInboundStageTransitions:
+        - StageName: Build 
+          Reason: "Disabling the transition on pipeline cloud formation deploy"        
 
 
   ##############################
@@ -306,7 +306,7 @@ Resources:
               - ecr:DescribeImages
             Resource: "*"
 
-  CodeBuildServiceRolePolicy:
+  CodeBuildServiceRoleBasePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy used in trust relationship with CodeBuild."
@@ -332,9 +332,9 @@ Resources:
             - s3:GetBucketAcl
             - s3:GetBucketLocation
           Resource:
-            # - arn:aws:s3:::tfgm-da-lamdba*
+            - arn:aws:s3:::tfgm-da-lamdba*
             # - arn:aws:s3:::da-snowflake-code-pipeline-artifacts*
-            - !GetAtt CodePipelineArtifactStoreBucket.Arn
+            - !Join [ "", [!GetAtt CodePipelineArtifactStoreBucket.Arn, "*"] ]
         - Effect: Allow
           Resource:
             #- arn:aws:codebuild:eu-west-2:177539856531:report-group/eu-west-2-da-snowflake-lambda-code-build-*  
@@ -368,7 +368,7 @@ Resources:
             - erc:UploadLayerPart
             - erc:CompleteLayerUpload            
           Resource:
-            - arn:aws:ecr:eu-west-2:177539856531:repository/lambda_snowsql
+            - "*"
           
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
@@ -386,7 +386,7 @@ Resources:
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
-        - !Ref CodeBuildServiceRolePolicy
+        - !Ref CodeBuildServiceRoleBasePolicy
         - !Ref CodeBuildImageRepositoryPolicy
 
   CodeDeployRole:
