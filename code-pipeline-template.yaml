@@ -174,8 +174,8 @@ Resources:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
       DisableInboundStageTransitions:
-        - StageName: Build 
-          Reason: "Disabling the transition on pipeline cloud formation deploy"        
+        - StageName: Deploy 
+          Reason: "Testing Build" 
 
 
   ##############################
