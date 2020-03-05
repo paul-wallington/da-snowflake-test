@@ -21,6 +21,10 @@ Parameters:
     Description: Stack name for deployment
     Type: String
     Default: snowflake-testing
+  DockerImage:
+    Description: Docker image in ECR used to build and deploy stack
+    Type: String
+    Default: lambda_snowsql    
 
 Resources:
       
@@ -174,8 +178,8 @@ Resources:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
       DisableInboundStageTransitions:
-        - StageName: Deploy 
-          Reason: "Testing Build" 
+        - StageName: Build 
+          Reason: "Do not want to run pipeline on template deployment" 
 
 
   ##############################
@@ -360,15 +364,15 @@ Resources:
             - "*"            
         - Effect: Allow
           Action:
-            - erc:BatchCheckLayerAvailability
-            - erc:GetDownloadUrlForLayer
-            - erc:BatchGetImage
-            - erc:PutImage
-            - erc:InitiateLayerUpload
-            - erc:UploadLayerPart
-            - erc:CompleteLayerUpload            
-          Resource:
-            - "*"
+            - ecr:BatchCheckLayerAvailability
+            - ecr:GetDownloadUrlForLayer
+            - ecr:BatchGetImage
+            - ecr:PutImage
+            - ecr:InitiateLayerUpload
+            - ecr:UploadLayerPart
+            - ecr:CompleteLayerUpload            
+          Resource:            
+            - arn:aws:ecr:eu-west-2:177539856531:repository/lambda_snowsql
           
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
