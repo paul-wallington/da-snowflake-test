@@ -230,8 +230,20 @@ Resources:
               - lambda.amazonaws.com
           Action:
           - sts:AssumeRole
-      ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+      - PolicyName: !Join [ "-", ["da-pipeline-lambda-role-policy", !Ref "AWS::Region", "cftest"] ]
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+              - logs:*     
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow            
+            Action:
+              - codepipeline:PutJobSuccessResult
+              - codepipeline:PutJobFailureResult
+            Resource: "*"        
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
