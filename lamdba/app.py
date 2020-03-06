@@ -7,6 +7,7 @@ from common import Functions
 # import boto3
 # from botocore.client import ClientError
 # status_code = 200
+# import time
 # import s3fs
 
 
@@ -261,4 +262,5 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
         with open(json_event) as response:
             _event = json.load(response)
             invoke_snowflake_load_from_cloudwatch_event(_event, '')
+
 

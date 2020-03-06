@@ -22,15 +22,16 @@ class Functions:
 
             return param_response
 
+    @staticmethod
     def execute_query(conn, sql):
         cursor = conn.cursor()
         cursor.execute(sql)
         cursor.close()
 
+    @staticmethod
     def return_query(conn, sql):
         cursor = conn.cursor()
         cursor.execute(sql)
+        cursor.close()        
         result = cursor.fetchone()
         return result[0]
-        cursor.close()
-

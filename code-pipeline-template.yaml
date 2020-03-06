@@ -31,6 +31,20 @@ Parameters:
     Default: build-python3.7        
 
 Resources:
+
+  ##############################
+  ### Lamdba Functions ####
+  ##############################
+  InvokeWait:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: invoke-wait
+      Role: !GetAtt PipelineLamdbaRole.Arn
+      CodeUri: lamdba/
+      Handler: pipeline.invoke_wait
+      Runtime: python3.7
+      MemorySize: 128
+      Timeout: 45
       
   ##############################
   ### S3 ####
@@ -144,6 +158,20 @@ Resources:
                 OAuthToken: "{{resolve:secretsmanager:da_snowflake_github:SecretString:pat}}"
                 PollForSourceChanges: false
               RunOrder: 1
+        - Name: Wait
+          Actions:
+            - Name: wait-for-30-seconds
+              ActionTypeId:
+                Category: Invoke
+                Owner: AWS
+                Provider: Lambda       
+                Version: 1
+              Configuration:
+                FunctionName: invoke-wait
+              InputArtifacts: []                
+              OutputArtifacts: []
+              Region: !Ref AWS::Region
+              RunOrder: 1              
         - Name: Build
           Actions:
             - Name: build-with-codebuild            
@@ -177,7 +205,7 @@ Resources:
               InputArtifacts:
                 - Name: BuildArtifact
               Region: !Ref AWS::Region
-              RunOrder: 3              
+              RunOrder: 1          
       ArtifactStore:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
@@ -189,6 +217,22 @@ Resources:
   ##############################
   ### Policies and Roles ####
   ##############################
+  PipelineLamdbaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ "-", ["da-pipeline-lambda-role", !Ref "AWS::Region"] ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
