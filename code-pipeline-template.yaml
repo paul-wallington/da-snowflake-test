@@ -182,7 +182,7 @@ Resources:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
       DisableInboundStageTransitions:
-        - StageName: Deply 
+        - StageName: Deploy 
           Reason: "Do not want to run deploy stage on template deployment" 
 
 
