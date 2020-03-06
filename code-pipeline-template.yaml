@@ -24,7 +24,11 @@ Parameters:
   DockerImage:
     Description: Docker image in ECR used to build and deploy stack
     Type: String
-    Default: lambda_snowsql    
+    Default: lambda_snowsql 
+  DockerImageBuild:
+    Description: Docker image build used to build and deploy stack
+    Type: String
+    Default: build-python3.7        
 
 Resources:
       
@@ -101,7 +105,7 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: buildspec.yml
       Environment:
-        Image: lamdba_snowsql:build-python3.7
+        Image: 177539856531.dkr.ecr.eu-west-2.amazonaws.com/lambda_snowsql:build-python3.7
         ImagePullCredentialsType: SERVICE_ROLE
         PrivilegedMode: true
         Type: LINUX_CONTAINER
@@ -178,8 +182,8 @@ Resources:
         Type: S3
         Location: !Ref CodePipelineArtifactStoreBucket
       DisableInboundStageTransitions:
-        - StageName: Build 
-          Reason: "Do not want to run pipeline on template deployment" 
+        - StageName: Deply 
+          Reason: "Do not want to run deploy stage on template deployment" 
 
 
   ##############################
