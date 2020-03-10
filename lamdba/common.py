@@ -35,3 +35,15 @@ class Functions:
         cursor.close()        
         result = cursor.fetchone()
         return result[0]
+
+    @staticmethod
+    def empty_s3(s3bucket):
+
+        try:
+            s3 = boto3.resource('s3')
+            print(f'Emptying bucket {s3bucket}...')
+            bucket = s3.Bucket('s3bucket')
+            bucket.objects.all().delete()
+
+        except ClientError as ce:
+            print("Unexpected error: %s" % ce)

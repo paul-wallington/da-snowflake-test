@@ -10,13 +10,13 @@ Parameters:
   RepositoryName:
     Description: GitHub repository name
     Type: String
-    Default: test    
+    Default: test
   GitHubOwner:
     Type: String
   BuildName:
     Description: CodeBuild project name
     Type: String
-    Default: da-snowflake-lambda-code-build-eu-west-2-cftest
+    Default: da-snowflake-lambda-code-build-eu-west-2
   DeployStackName:
     Description: Stack name for deployment
     Type: String
@@ -45,48 +45,61 @@ Resources:
       Runtime: python3.7
       MemorySize: 128
       Timeout: 45
+
+  Emptys3Buckets:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: empty-s3-buckets
+      Role: !GetAtt PipelineLamdbaRole.Arn
+      CodeUri: lamdba/
+      Handler: pipeline.empty_s3_buckets
+      Runtime: python3.7
+      MemorySize: 128
+      Timeout: 45
+      Environment:
+        Variables:
+          env: dev         
       
   ##############################
   ### S3 ####
   ##############################
-  CodePipelineArtifactStoreBucket:
+  CodePipelineArtifactBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
+      #AccessControl: Private
       BucketName: da-snowflake-code-pipeline-artifacts
+      #PublicAccessBlockConfiguration:
+        #BlockPublicAcls : true
+        #BlockPublicPolicy : true
+        #IgnorePublicAcls : true
+        #RestrictPublicBuckets : true
+    #DeletionPolicy: Delete      
 
-  CodePipelineArtifactStoreBucketPolicy:
-    Type: 'AWS::S3::BucketPolicy'
-    Properties:
-      Bucket: !Ref CodePipelineArtifactStoreBucket
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: DenyUnEncryptedObjectUploads
-            Effect: Deny
-            Principal: '*'
-            Action: 's3:PutObject'
-            Resource: !Join 
-              - ''
-              - - !GetAtt 
-                  - CodePipelineArtifactStoreBucket
-                  - Arn
-                - /*
-            Condition:
-              StringNotEquals:
-                's3:x-amz-server-side-encryption': 'aws:kms'
-          - Sid: DenyInsecureConnections
-            Effect: Deny
-            Principal: '*'
-            Action: 's3:*'
-            Resource: !Join 
-              - ''
-              - - !GetAtt 
-                  - CodePipelineArtifactStoreBucket
-                  - Arn
-                - /*
-            Condition:
-              Bool:
-                'aws:SecureTransport': false  
+  #CodePipelineArtifactBucketPolicy:
+  #  Type: 'AWS::S3::BucketPolicy'
+  #  Properties:
+  #    Bucket: !Ref CodePipelineArtifactBucket
+  #    PolicyDocument:
+  #      Version: 2012-10-17
+  #      Statement:
+  #        - Sid: DenyUnEncryptedObjectUploads
+  #          Effect: Deny
+  #          Principal: '*'
+  #          Action: 's3:PutObject'
+  #          Resource: 
+  #            - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
+  #          Condition:
+  #            StringNotEquals:
+  #              's3:x-amz-server-side-encryption': 'aws:kms'
+  #        - Sid: DenyInsecureConnections
+  #          Effect: Deny
+  #          Principal: '*'
+  #          Action: 's3:*'
+  #          Resource:
+  #            - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
+  #          Condition:
+  #            Bool:
+  #              'aws:SecureTransport': false  
 
   ##############################
   ### Webhook ####
@@ -112,7 +125,7 @@ Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
+      Name: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region"] ]
       Description: Will build project lambda binaries using sam build in lambda_snowsql docker image
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Source:
@@ -138,7 +151,7 @@ Resources:
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Join [ "-", ["da-snowflake-lambda-code-pipeline", !Ref "AWS::Region", "cftest"] ]
+      Name: !Join [ "-", ["da-snowflake-lambda-code-pipeline", !Ref "AWS::Region"] ]
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
       Stages:
         - Name: Source
@@ -160,7 +173,7 @@ Resources:
               RunOrder: 1
         - Name: Wait
           Actions:
-            - Name: wait-for-30-seconds
+            - Name: wait-for-5-seconds
               ActionTypeId:
                 Category: Invoke
                 Owner: AWS
@@ -181,7 +194,7 @@ Resources:
                 Provider: CodeBuild       
                 Version: 1
               Configuration:
-                ProjectName: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region", "cftest"] ]
+                ProjectName: !Join [ "-", ["da-snowflake-lambda-code-build", !Ref "AWS::Region"] ]
               InputArtifacts:
                 - Name: SourceArtifact
               OutputArtifacts:
@@ -208,7 +221,7 @@ Resources:
               RunOrder: 1          
       ArtifactStore:
         Type: S3
-        Location: !Ref CodePipelineArtifactStoreBucket
+        Location: !Ref CodePipelineArtifactBucket
       DisableInboundStageTransitions:
         - StageName: Deploy 
           Reason: "Do not want to run deploy stage on template deployment" 
@@ -230,8 +243,13 @@ Resources:
               - lambda.amazonaws.com
           Action:
           - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AWSLambdaExecute
+      - !Ref CodePipelineArtifactPolicy     
       Policies:
-      - PolicyName: !Join [ "-", ["da-pipeline-lambda-role-policy", !Ref "AWS::Region", "cftest"] ]
+      - PolicyName: !Join [ "-", ["da-pipeline-lambda-role-policy", !Ref "AWS::Region"] ]
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -243,12 +261,44 @@ Resources:
             Action:
               - codepipeline:PutJobSuccessResult
               - codepipeline:PutJobFailureResult
-            Resource: "*"        
+            Resource: "*"
+            Effect: Allow
+            Action:
+            - ssm:GetParameterHistory
+            - ssm:GetParametersByPath
+            - ssm:GetParameters
+            - ssm:GetParameter
+            Resource: "*"
 
+  CodePipelineArtifactPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "Policy to allow Read and Write access to objects in ${CodePipelineArtifactBucket} S3 bucket."
+      ManagedPolicyName: !Join [ "-", ["da-code-pipeline-artifact-policy", !Ref "AWS::Region"] ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Sid: "PutGetDeleteObjectsInBucket"
+          Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:GetObjectVersion
+            - s3:DeleteObjectVersion
+            - s3:DeleteObject
+          Resource:
+             - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
+        - Sid: "ListObjectsInBucket"
+          Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource:
+             - !GetAtt [ CodePipelineArtifactBucket, Arn ]              
+            
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role", !Ref "AWS::Region", "cftest"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role", !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -260,7 +310,7 @@ Resources:
           - sts:AssumeRole          
       Path: /
       Policies:
-      - PolicyName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role-policy", !Ref "AWS::Region", "cftest"] ]
+      - PolicyName: !Join [ "-", ["da-snowflake-lambda-code-pipeline-service-role-policy", !Ref "AWS::Region"] ]
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -374,7 +424,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy used in trust relationship with CodeBuild."
-      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-base-policy", !Ref "AWS::Region", "cftest"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-base-policy", !Ref "AWS::Region"] ]
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -385,9 +435,7 @@ Resources:
             - logs:PutLogEvents
           Resource:
             -  !Join [ "", ["arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/", !Ref BuildName] ]
-            -  !Join [ "", ["arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/", !Ref BuildName, ":*"] ]
-            #- arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build
-            #- arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/eu-west-2-da-snowflake-lambda-code-build:*              
+            -  !Join [ "", ["arn:aws:logs:eu-west-2:177539856531:log-group:/aws/codebuild/", !Ref BuildName, ":*"] ]           
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -397,11 +445,9 @@ Resources:
             - s3:GetBucketLocation
           Resource:
             - arn:aws:s3:::tfgm-da-lamdba*
-            # - arn:aws:s3:::da-snowflake-code-pipeline-artifacts*
-            - !Join [ "", [!GetAtt CodePipelineArtifactStoreBucket.Arn, "*"] ]
+            - !Join [ "", [!GetAtt CodePipelineArtifactBucket.Arn, "*"] ]
         - Effect: Allow
           Resource:
-            #- arn:aws:codebuild:eu-west-2:177539856531:report-group/eu-west-2-da-snowflake-lambda-code-build-*  
             - !Join [ "", ["arn:aws:codebuild:eu-west-2:177539856531:report-group/", !Ref BuildName, "-*"] ]       
           Action:
             - codebuild:CreateReportGroup
@@ -413,7 +459,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: "Policy used in trust relationship with CodeBuild."
-      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-image-repository-policy", !Ref "AWS::Region", "cftest"] ]
+      ManagedPolicyName: !Join [ "-", ["da-snowflake-lamdba-code-build-image-repository-policy", !Ref "AWS::Region"] ]
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -437,8 +483,8 @@ Resources:
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-build-service-role", !Ref "AWS::Region", "cftest"] ]
-      # RoleName: !Join [ "-", [!Ref "AWS::StackName", "code-build-service-role-cftest", !Ref "AWS::Region"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-build-service-role", !Ref "AWS::Region"] ]
+      # RoleName: !Join [ "-", [!Ref "AWS::StackName", "code-build-service-role", !Ref "AWS::Region"] ]
       Path: "/service-role/"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -456,7 +502,7 @@ Resources:
   CodeDeployRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-deploy-role", !Ref "AWS::Region", "cftest"] ]
+      RoleName: !Join [ "-", ["da-snowflake-lamdba-code-deploy-role", !Ref "AWS::Region"] ]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -467,7 +513,7 @@ Resources:
           Action:
           - sts:AssumeRole
       Policies:          
-      - PolicyName:  !Join [ "-", ["da-snowflake-lamdba-code-deploy-policy", !Ref "AWS::Region", "cftest"] ]
+      - PolicyName:  !Join [ "-", ["da-snowflake-lamdba-code-deploy-policy", !Ref "AWS::Region"] ]
         PolicyDocument:      
           Version: '2012-10-17'
           Statement:
@@ -511,6 +557,8 @@ Resources:
       - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
       - arn:aws:iam::aws:policy/CloudWatchEventsFullAccess      
 
-
-
+Outputs:
+  CodePipelineArtifactBucketARN:
+    Value: !GetAtt CodePipelineArtifactBucket.Arn
+    Description: ARN of Artifact Store Bucket
 
