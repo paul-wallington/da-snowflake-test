@@ -247,7 +247,7 @@ Resources:
       - arn:aws:iam::aws:policy/AmazonSQSFullAccess
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
       - arn:aws:iam::aws:policy/AWSLambdaExecute
-      - !Ref CodePipelineArtifactPolicy     
+      # - !Ref CodePipelineArtifactPolicy     
       Policies:
       - PolicyName: !Join [ "-", ["da-pipeline-lambda-role-policy", !Ref "AWS::Region"] ]
         PolicyDocument:
@@ -262,38 +262,54 @@ Resources:
               - codepipeline:PutJobSuccessResult
               - codepipeline:PutJobFailureResult
             Resource: "*"
-            Effect: Allow
+          - Effect: Allow
             Action:
             - ssm:GetParameterHistory
             - ssm:GetParametersByPath
             - ssm:GetParameters
             - ssm:GetParameter
             Resource: "*"
+          - Sid: "PutGetDeleteObjectsInBucket"
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObjectVersion
+              - s3:DeleteObject
+            Resource:
+              - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
+          - Sid: "ListObjectsInBucket"
+            Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - !GetAtt [ CodePipelineArtifactBucket, Arn ]                 
 
-  CodePipelineArtifactPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Description: "Policy to allow Read and Write access to objects in ${CodePipelineArtifactBucket} S3 bucket."
-      ManagedPolicyName: !Join [ "-", ["da-code-pipeline-artifact-policy", !Ref "AWS::Region"] ]
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Sid: "PutGetDeleteObjectsInBucket"
-          Effect: Allow
-          Action:
-            - s3:PutObject
-            - s3:GetObject
-            - s3:GetObjectVersion
-            - s3:DeleteObjectVersion
-            - s3:DeleteObject
-          Resource:
-             - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
-        - Sid: "ListObjectsInBucket"
-          Effect: Allow
-          Action:
-            - s3:ListBucket
-          Resource:
-             - !GetAtt [ CodePipelineArtifactBucket, Arn ]              
+  #CodePipelineArtifactPolicy:
+  #  Type: AWS::IAM::ManagedPolicy
+  #  Properties:
+  #    Description: "Policy to allow Read and Write access to objects in ${CodePipelineArtifactBucket} S3 bucket."
+  #    ManagedPolicyName: !Join [ "-", ["da-code-pipeline-artifact-policy", !Ref "AWS::Region"] ]
+  #    PolicyDocument:
+  #      Version: "2012-10-17"
+  #      Statement:
+  #      - Sid: "PutGetDeleteObjectsInBucket"
+  #        Effect: Allow
+  #        Action:
+  #          - s3:PutObject
+  #          - s3:GetObject
+  #          - s3:GetObjectVersion
+  #          - s3:DeleteObjectVersion
+  #          - s3:DeleteObject
+  #        Resource:
+  #           - !Join [ "", [ !GetAtt [ CodePipelineArtifactBucket, Arn ], "/*"]]
+  #      - Sid: "ListObjectsInBucket"
+  #        Effect: Allow
+  #        Action:
+  #          - s3:ListBucket
+  #        Resource:
+  #           - !GetAtt [ CodePipelineArtifactBucket, Arn ]              
             
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
