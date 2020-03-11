@@ -5,12 +5,10 @@ import json
 from datetime import datetime
 from common import Functions
 
-pipeline = boto3.client('codepipeline')
-# https://realpython.com/python-boto3-aws-s3/
-s3 = boto3.resource('s3')
-
 
 def invoke_wait(event, context):
+
+    pipeline = boto3.client('codepipeline')
 
     time.sleep(5)
 

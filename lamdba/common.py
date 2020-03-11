@@ -42,8 +42,10 @@ class Functions:
         try:
             s3 = boto3.resource('s3')
             print(f'Emptying bucket {s3bucket}...')
-            bucket = s3.Bucket('s3bucket')
-            bucket.objects.all().delete()
+            bucket = s3.Bucket(s3bucket)
+            
+            for key in bucket.objects.all():
+                key.delete()          
 
         except ClientError as ce:
             print("Unexpected error: %s" % ce)
