@@ -13,10 +13,6 @@ Parameters:
     Default: test
   GitHubOwner:
     Type: String
-  BuildName:
-    Description: CodeBuild project name
-    Type: String
-    Default: da-snowflake-code-pipeline-code-build-eu-west-2
   DeployStackName:
     Description: Stack name for deployment
     Type: String
@@ -466,8 +462,7 @@ Resources:
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource:
-            -  !Join [ "", ["arn:aws:logs:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":log-group:/aws/codebuild/", !Ref BuildName] ]
-            -  !Join [ "", ["arn:aws:logs:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":log-group:/aws/codebuild/", !Ref BuildName, ":*"] ]           
+            -  !Join [ "", ["arn:aws:logs:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":log-group:/aws/codebuild/*"] ]         
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -480,7 +475,7 @@ Resources:
             - !Join [ "", [!GetAtt CodePipelineArtifactBucket.Arn, "*"] ]
         - Effect: Allow
           Resource:
-            - !Join [ "", ["arn:aws:codebuild:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":report-group/", !Ref BuildName, "-*"] ]       
+            - !Join [ "", ["arn:aws:codebuild:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":report-group/*"] ]       
           Action:
             - codebuild:CreateReportGroup
             - codebuild:CreateReport
