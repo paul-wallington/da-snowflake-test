@@ -47,17 +47,21 @@ def invoke_snowflake_load_from_s3_event(event, context):
     file_format = Functions.get_parameter(param, True)
 
     # connect to snowflake data warehouse
-    conn = sf.connect(
-        account=ac,
-        user=un,
-        password=pw,
-        role=role,
-        warehouse=wh,
-        database=db,
-        schema=schema,
-        ocsp_response_cache_filename="/tmp/ocsp_response_cache"
-    )
-    print('Snowflake connection opened...')
+    try:
+        conn = sf.connect(
+            account=ac,
+            user=un,
+            password=pw,
+            role=role,
+            warehouse=wh,
+            database=db,
+            schema=schema,
+            ocsp_response_cache_filename="/tmp/ocsp_response_cache"
+        )
+        print('Snowflake connection opened...')
+
+    except Exception as e:
+        print(e)    
 
     try:
         # sql = 'USE ROLE {}'.format(role)
@@ -188,17 +192,18 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
     file_format = Functions.get_parameter(param, True)
 
     # connect to snowflake data warehouse
-    conn = sf.connect(
-        account=ac,
-        user=un,
-        password=pw,
-        role=role,
-        warehouse=wh,
-        database=db,
-        schema=schema,
-        ocsp_response_cache_filename="/tmp/ocsp_response_cache"
-    )
-    print('Snowflake connection opened...')
+    try:
+        conn = sf.connect(
+            account=ac,
+            user=un,
+            password=pw,
+            role=role,
+            warehouse=wh,
+            database=db,
+            schema=schema,
+            ocsp_response_cache_filename="/tmp/ocsp_response_cache"
+        )
+        print('Snowflake connection opened...')
 
     try:
         sql = 'SELECT current_role()'
