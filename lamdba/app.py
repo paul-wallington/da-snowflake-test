@@ -205,6 +205,9 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
         )
         print('Snowflake connection opened...')
 
+    except Exception as e:
+        print(e)
+
     try:
         sql = 'SELECT current_role()'
         print('role: ' + Functions.return_query(conn, sql))
