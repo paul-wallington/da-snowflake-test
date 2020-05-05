@@ -3,8 +3,8 @@ botocore<1.13.0,>=1.5.0
 boto3<1.10.0,>=1.4.4
 # https://stackoverflow.com/questions/58243179/
 # how-can-i-connect-to-snowflake-in-aws-lambda-function-without-using-snowflake-co
-#snowflake-connector-python==2.0.1
-snowflake-connector-python==1.9.1
+snowflake-connector-python==2.2.5
+#snowflake-connector-python==1.9.1
 asn1crypto<1.0.0
 # ERROR: aws-sam-cli 0.35.0 has requirement boto3>=1.10.29,~=1.10, but you'll have boto3 1.9.253 which is incompatible.
 aws-sam-cli==0.34.0
