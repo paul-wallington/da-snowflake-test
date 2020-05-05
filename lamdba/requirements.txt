@@ -4,16 +4,16 @@ boto3<1.10.0,>=1.4.4
 # https://stackoverflow.com/questions/58243179/
 # how-can-i-connect-to-snowflake-in-aws-lambda-function-without-using-snowflake-co
 #snowflake-connector-python==2.0.1
-snowflake-connector-python==1.9.1
-asn1crypto<1.0.0
+#snowflake-connector-python==1.9.1
+#asn1crypto<1.0.0
 # ERROR: aws-sam-cli 0.35.0 has requirement boto3>=1.10.29,~=1.10, but you'll have boto3 1.9.253 which is incompatible.
-aws-sam-cli==0.34.0
+#aws-sam-cli==0.34.0
 # ERROR: awscli 1.16.294 has requirement botocore==1.13.30, but you'll have botocore 1.12.253 which is incompatible.
 awscli==1.16.263
 # ERROR: aws-sam-cli 0.23.0 has requirement six~=1.11.0, but you'll have six 1.12.0 which is incompatible.
-six==1.11.0
-azure-storage-blob==0.37.0
+#six==1.11.0
+#azure-storage-blob==0.37.0
 # ERROR: awscli 1.16.263 has requirement PyYAML<5.2,>=3.10; python_version != "2.6" and python_version != "3.3", but you'll have pyyaml 5.2 which is incompatible.
-PyYAML==5.1.2
+#PyYAML==5.1.2
 # Lamdba Layer
 s3fs==0.4.0
