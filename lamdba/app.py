@@ -58,6 +58,8 @@ def invoke_snowflake_load_from_s3_event(event, context):
             schema=schema,
             ocsp_response_cache_filename="/tmp/ocsp_response_cache"
         )
+        print(str(conn))
+
         print('Snowflake connection opened...')
 
     except Exception as e:
