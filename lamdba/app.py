@@ -222,7 +222,7 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
 
         except Exception as e:
             print(e)
-
+        print('Got here2')
         # get the object that triggered cloudwatch
         # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html#events-for-services-not-listed
         try:
@@ -236,7 +236,7 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
 
         except Exception as e:
             print(e)
-
+        print('Got here3')
         try:
             sql = 'TRUNCATE ' + schema + '.OutputAreaJson'
             print(sql)
@@ -244,6 +244,10 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
                 with conn.cursor() as cursor:
                     cursor.execute(sql)
 
+        except Exception as e:
+            print(e)
+        print('Got here4')
+        try:
             sql = "copy into " + schema + ".OutputAreaJson from @" \
                   + str.replace(bucket, "-", "_") + "/" + key[key.rindex('/')+1:len(key)] + \
                   " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
@@ -251,7 +255,7 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
             with conn:
                 with conn.cursor() as cursor:
                     cursor.execute(sql)
-
+        print('Got here5')
         except Exception as e:
             print(e)
 
