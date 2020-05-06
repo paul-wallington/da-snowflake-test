@@ -72,7 +72,7 @@ def invoke_snowflake_load_from_s3_event(event, context):
         sql = 'SELECT current_role()'
         print('role: ' + Functions.return_query(conn, sql))
 
-        # sql = 'SELECT current_warehouse()'
+        sql = 'SELECT current_warehouse()'
         print('warehouse: ' + Functions.return_query(conn, sql))
 
         try:
@@ -214,49 +214,66 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
         #sql = 'SELECT current_role()'
         #print('role: ' + Functions.return_query(conn, sql))
 
+        print('Got here')
+
         sql = 'SELECT current_warehouse()'
-        print('warehouse: ' + Functions.return_query(conn, sql))
+        # print('warehouse: ' + Functions.return_query(conn, sql))
 
-        try:
-            sql = 'ALTER WAREHOUSE {} RESUME'.format(wh)
-            Functions.execute_query(conn, sql)
+        with conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()
+                print(result)
+        print('Got here2')
+        # for c in cursor:
+        # print(c)
+        # except Exception as e:
+        #    print(e)
+        # finally:
+        #    cursor.close()
 
-        except Exception as e:
-            print(e)
+        # print(one_row[0])
 
-        sql = 'SELECT current_schema()'
-        print('schema: ' + Functions.return_query(conn, sql))
+        #try:
+        #    sql = 'ALTER WAREHOUSE {} RESUME'.format(wh)
+        #    Functions.execute_query(conn, sql)
 
-        sql = 'SELECT current_database()'
-        print('database: ' + Functions.return_query(conn, sql))
+        #except Exception as e:
+        #    print(e)
+
+        #sql = 'SELECT current_schema()'
+        #print('schema: ' + Functions.return_query(conn, sql))
+
+        #sql = 'SELECT current_database()'
+        #print('database: ' + Functions.return_query(conn, sql))
 
         # get the object that triggered cloudwatch
         # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html#events-for-services-not-listed
-        try:
-            bucket = event['detail']['requestParameters']['bucketName']
-            key = event['detail']['requestParameters']['key']
+        #try:
+        #    bucket = event['detail']['requestParameters']['bucketName']
+        #    key = event['detail']['requestParameters']['key']
 
-            print(
-                'bucket: ' + bucket
-                + '\nkey: ' + key
-            )
+        #    print(
+        #        'bucket: ' + bucket
+        #        + '\nkey: ' + key
+        #    )
 
-        except Exception as e:
-            print(e)
+        #except Exception as e:
+        #    print(e)
 
-        try:
-            sql = 'TRUNCATE ' + schema + '.OutputAreaJson'
-            print(sql)
-            Functions.execute_query(conn, sql)
+        #try:
+        #    sql = 'TRUNCATE ' + schema + '.OutputAreaJson'
+        #    print(sql)
+        #    Functions.execute_query(conn, sql)
 
-            sql = "copy into " + schema + ".OutputAreaJson from @" \
-                  + str.replace(bucket, "-", "_") + "/" + key[key.rindex('/')+1:len(key)] + \
-                  " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
-            print(sql)
-            Functions.execute_query(conn, sql)
+        #    sql = "copy into " + schema + ".OutputAreaJson from @" \
+        #          + str.replace(bucket, "-", "_") + "/" + key[key.rindex('/')+1:len(key)] + \
+        #          " FILE_FORMAT = '" + file_format + "' ON_ERROR = 'ABORT_STATEMENT';"
+        #    print(sql)
+        #    Functions.execute_query(conn, sql)
 
-        except Exception as e:
-            print(e)
+        #except Exception as e:
+        #    print(e)
 
     except Exception as e:
         print(e)
