@@ -66,13 +66,13 @@ def invoke_snowflake_load_from_s3_event(event, context):
         print(e)    
 
     try:
-        # sql = 'USE ROLE {}'.format(role)
-        # Functions.execute_query(conn, sql)
+        sql = 'USE ROLE {}'.format(role)
+        Functions.execute_query(conn, sql)
 
-        # sql = 'SELECT current_role()'
-        # print('role: ' + Functions.return_query(conn, sql))
+        sql = 'SELECT current_role()'
+        print('role: ' + Functions.return_query(conn, sql))
 
-        sql = 'SELECT current_warehouse()'
+        # sql = 'SELECT current_warehouse()'
         print('warehouse: ' + Functions.return_query(conn, sql))
 
         try:
@@ -211,8 +211,8 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
         print(e)
 
     try:
-        sql = 'SELECT current_role()'
-        print('role: ' + Functions.return_query(conn, sql))
+        #sql = 'SELECT current_role()'
+        #print('role: ' + Functions.return_query(conn, sql))
 
         sql = 'SELECT current_warehouse()'
         print('warehouse: ' + Functions.return_query(conn, sql))
