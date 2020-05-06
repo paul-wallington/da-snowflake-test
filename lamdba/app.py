@@ -255,10 +255,12 @@ def invoke_snowflake_load_from_cloudwatch_event(event, context):
             with conn:
                 with conn.cursor() as cursor:
                     cursor.execute(sql)
-        print('Got here5')
+
         except Exception as e:
             print(e)
 
+        print('Got here5')
+    
     except Exception as e:
         print(e)
 
